@@ -8,11 +8,16 @@
 import { createRoot } from 'react-dom/client';
 import { createHashRouter, RouterProvider } from 'react-router';
 import { App } from './App';
+import { WebGLBackgroundExample } from './webgl';
 
 let router = createHashRouter([
   {
     path: '/',
     element: <App />
+  },
+  {
+    path: 'webgl',
+    element: <WebGLBackgroundExample />
   }
 ]);
 
