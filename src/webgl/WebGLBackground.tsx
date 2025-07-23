@@ -1,4 +1,7 @@
 import React, { useRef, useEffect, useState, ReactNode } from 'react';
+import defaultShaderSource from './shaders/defaultSdf.glsl' with {type: "text"};
+import vertexShaderSource from './shaders/vertexShader.glsl' with {type: "text"};
+import fragmentShaderSource from './shaders/fragmentShaderTemplate.glsl' with {type: "text"};
 
 interface WebGLBackgroundProps {
   children?: ReactNode;
@@ -9,23 +12,6 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
-  // Default SDF function if none provided
-  const defaultSdfFunction = `
-    float sdf(vec2 p) {
-      // Simple circle SDF
-      return length(p) - 0.5;
-    }
-    
-    // Default color function
-    vec3 getColor(float d) {
-      vec3 color = vec3(1.0) - sign(d) * vec3(0.1, 0.4, 0.7);
-      color *= 1.0 - exp(-6.0 * abs(d));
-      color *= 0.8 + 0.2 * cos(150.0 * d);
-      color = mix(color, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
-      return color;
-    }
-  `;
 
   // Initialize WebGL
   useEffect(() => {
@@ -38,42 +24,9 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
       return;
     }
 
-    // Create shader program
-    const vertexShaderSource = `
-      attribute vec2 a_position;
-      void main() {
-        gl_Position = vec4(a_position, 0.0, 1.0);
-      }
-    `;
-
-    const fragmentShaderSource = `
-      precision mediump float;
-      uniform vec2 u_resolution;
-      uniform float u_time;
-      
-      ${sdfFunction || defaultSdfFunction}
-      
-      void main() {
-        // Convert pixel coordinates to normalized device coordinates
-        vec2 st = (gl_FragCoord.xy / u_resolution.xy) * 2.0 - 1.0;
-        
-        // Adjust for aspect ratio
-        st.y *= u_resolution.y / u_resolution.x;
-        
-        // // Calculate distance using the SDF function
-        float d = sdf(st);
-        // float d = sdf(gl_FragCoord.xy - u_resolution.xy * .5);
-        
-        // Use the getColor function to visualize the SDF with time-based effects
-        vec3 color = getColor(d);
-        
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `;
-
     // Compile shaders
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('${sdfFunction}', defaultShaderSource ?? sdfFunction));
 
     if (!vertexShader || !fragmentShader) return;
 
