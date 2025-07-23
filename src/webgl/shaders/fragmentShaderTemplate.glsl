@@ -4,6 +4,9 @@ uniform float u_time;
 
 const float scale = ${scale};
 
+// location of the preprocessor definition
+${preProcessor}
+
 // SDF function will be imported here
 ${sdfFunction}
 
@@ -12,7 +15,7 @@ ${colorFunction}
 
 void main() {
   // Convert pixel coordinates to normalized device coordinates
-  vec2 st = (gl_FragCoord.xy / u_resolution.xy) * 2.0 - 1.0;
+  vec2 st = preProcessor(gl_FragCoord.xy);
   
   // Adjust for aspect ratio
   st.y *= u_resolution.y / u_resolution.x;

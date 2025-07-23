@@ -7,8 +7,10 @@ import vesicaSdf from './sdf/vesicaSdf.glsl' with {type: "text"};
 import starSdf  from './sdf/starSdf.glsl' with {type: "text"};
 import morphingSdf  from './sdf/morphingSdf.glsl' with {type: "text"};
 import noiseSimplex  from './sdf/noiseSimplex.glsl' with {type: "text"};
+import defaultSdf from './sdf/defaultSdf.glsl' with {type: "text"};
 
 export const sdfLibrary = {
+  defaultSdf,
   circleSdf,
   squareSdf,
   roundedBoxSdf,

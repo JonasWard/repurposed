@@ -4,11 +4,12 @@
   :root {
     @apply text-[rgba(255,255,255,0.87)] bg-[#242424] font-sans;
   }
-
+  
   body {
     @apply grid place-items-center min-w-[320px] min-h-screen relative m-0;
   }
 }
+
 
 @keyframes slide {
   from {
@@ -26,6 +27,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+#root {
+  width: 100svw;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion) {
