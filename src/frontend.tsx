@@ -13,11 +13,11 @@ import { WebGLBackgroundExample } from './webgl';
 let router = createHashRouter([
   {
     path: '/',
-    element: <App />
+    element: <WebGLBackgroundExample />
   },
   {
-    path: 'webgl',
-    element: <WebGLBackgroundExample />
+    path: 'naked-app',
+    element: <App />
   }
 ]);
 
