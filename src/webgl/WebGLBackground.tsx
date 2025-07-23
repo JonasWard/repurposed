@@ -1,14 +1,17 @@
 import React, { useRef, useEffect, useState, ReactNode } from 'react';
-import defaultShaderSource from './shaders/defaultSdf.glsl' with {type: "text"};
+import defaultShaderSource from './shaders/sdf/defaultSdf.glsl' with {type: "text"};
 import vertexShaderSource from './shaders/vertexShader.glsl' with {type: "text"};
+import defaultColourSource from './shaders/color/distanceMapping.glsl' with {type: "text"};
 import fragmentShaderSource from './shaders/fragmentShaderTemplate.glsl' with {type: "text"};
 
 interface WebGLBackgroundProps {
   children?: ReactNode;
   sdfFunction?: string; // Custom SDF function as a string (can include getColor function)
+  colorFunction?: string; // Custom Color function as a string (can include getColor function)
+  costumScale?: number
 }
 
-const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction }) => {
+const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction= defaultShaderSource, colorFunction = defaultColourSource, costumScale = 1.0 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -26,7 +29,7 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
 
     // Compile shaders
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('${sdfFunction}', defaultShaderSource ?? sdfFunction));
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('${sdfFunction}', sdfFunction ).replace('${colorFunction}', colorFunction).replace('${scale}', costumScale.toFixed(5)));
 
     if (!vertexShader || !fragmentShader) return;
 
@@ -182,7 +185,7 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
   return (
     <div ref={containerRef} className="relative w-[100svw] h-full overflow-hidden">
       <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full -z-10" />
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10 max-w-[1200px] m-auto p-4">{children}</div>
     </div>
   );
 };
