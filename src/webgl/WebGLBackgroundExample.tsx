@@ -39,8 +39,8 @@ const WebGLBackgroundExample: React.FC = () => {
       </WebGLBackground>
       <WebGLBackground
         sdfFunction={sdfLibrary.morphingSdf}
-        colorFunction={colorLibrary.blackAndWhiteMapping}
-        preprocessorFunction={preprocessorLibrary.pixelateProcessor}
+        colorFunction={colorLibrary.hsvMapping}
+        preprocessorFunction={preprocessorLibrary.tilingSymmetricProcessor}
         costumScale={0.0025}
       >
         <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
