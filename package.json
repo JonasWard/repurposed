@@ -7,10 +7,14 @@
   "module": "src/index.tsx",
   "scripts": {
     "dev": "bun --hot src/index.html",
+    "dev:vite": "vite",
     "start": "NODE_ENV=production bun ./dist/index.html",
-    "build": "bun --bun run build.ts"
+    "build": "bun --bun run build.ts",
+    "build:vite": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "bun-plugin-tailwind": "^0.0.14",
     "react": "^19",
     "react-dom": "^19",
@@ -20,6 +24,8 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "vite": "^6.0.0",
+    "@vitejs/plugin-react": "^4.3.0"
   }
 }
