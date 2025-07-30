@@ -23,7 +23,7 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl');
+    const gl = canvas.getContext('webgl2');
     if (!gl) {
       console.error('WebGL not supported');
       return;

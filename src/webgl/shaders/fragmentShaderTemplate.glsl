@@ -1,8 +1,11 @@
+#version 300 es
 precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
 const float scale = ${scale};
+
+out vec4 fragColor;
 
 // location of the preprocessor definition
 ${preProcessor}
@@ -26,5 +29,5 @@ void main() {
   // Use the getColor function to visualize the SDF with time-based effects
   vec3 color = getColor(d / scale);
   
-  gl_FragColor = vec4(color, 1.0);
+  fragColor = vec4(color, 1.0);
 }
