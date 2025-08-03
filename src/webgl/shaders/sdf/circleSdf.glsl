@@ -1,3 +1,3 @@
-float sdf(vec2 p) {
-  return length(p) - 0.5;
+float sdCircle(vec2 p) {
+  return length(p - ${vec2Center}) - ${radius};
 }

@@ -8,6 +8,8 @@ import starSdf  from './sdf/starSdf.glsl' with {type: "text"};
 import morphingSdf  from './sdf/morphingSdf.glsl' with {type: "text"};
 import noiseSimplex  from './sdf/noiseSimplex.glsl' with {type: "text"};
 import defaultSdf from './sdf/defaultSdf.glsl' with {type: "text"};
+import polygonSdf from './sdf/polygonSdf.glsl' with {type: "text"};
+import polylineSdf from './sdf/polygonSdf.glsl' with {type: "text"};
 
 export const sdfLibrary = {
   defaultSdf,
@@ -19,5 +21,7 @@ export const sdfLibrary = {
   vesicaSdf,
   starSdf,
   morphingSdf,
-  noiseSimplex
+  noiseSimplex,
+  polygonSdf,
+  polylineSdf
 };
