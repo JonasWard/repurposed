@@ -29,9 +29,15 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
       return;
     }
 
+    const fragmentShaderContent = fragmentShaderSource
+      .replace('${sdfFunction}', sdfFunction )
+      .replace('${colorFunction}', colorFunction)
+      .replace('${preProcessor}', preprocessorFunction)
+      .replace('${scale}', costumScale.toFixed(5));
+
     // Compile shaders
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('${sdfFunction}', sdfFunction ).replace('${colorFunction}', colorFunction).replace('${preProcessor}', preprocessorFunction).replace('${scale}', costumScale.toFixed(5)));
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderContent);
 
     if (!vertexShader || !fragmentShader) return;
 
