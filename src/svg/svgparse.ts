@@ -2,7 +2,7 @@
 
 import { parse } from 'svg-parser';
 import { Coordinate, SVGGeometryType, SVGPolygonType, SVGCircleType, SVGPolylineType } from './SVGTypes';
-import { Command, parseSVG } from 'svg-path-parser';
+import { Command, LineToCommand, MoveToCommand, parseSVG } from 'svg-path-parser';
 
 type svgPropType = string | number | undefined;
 
@@ -16,32 +16,46 @@ const getNumberForValue = (value: svgPropType): number | null => {
 
 const getNumberForValues = (...vs: svgPropType[]) => vs.map(getNumberForValue);
 
-const commandArrayParser = (commands: Command[]): Coordinate[] => {
-  return [
-    {
-      x: 0,
-      y: 0
-    },
-    {
-      x: 100,
-      y: 0
-    },
-    {
-      x: 100,
-      y: 100
-    },
-    {
-      x: 0,
-      y: 100
+const handleClosedPath = (commands: Command[]): SVGPolygonType => ({
+  type: 'polygon',
+  points: (commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]).map(
+    ({ x, y }) => ({ x, y })
+  )
+});
+
+const handleOpenPath = (commands: Command[]): SVGPolylineType => ({
+  type: 'polyline',
+  points: (commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]).map(
+    ({ x, y }) => ({ x, y })
+  ),
+  thickness: 0
+});
+
+const commandArrayParser = (commands: Command[]): SVGGeometryType[] => {
+  let leftoverCommands = [...commands];
+
+  let end = false;
+
+  const svggeos: SVGGeometryType[] = [];
+
+  // split in subpaths
+  for (let i = leftoverCommands.length - 1; i >= 0; i -= 1) {
+    if (leftoverCommands[i].command === 'closepath') {
+      const currenCommands = leftoverCommands.slice(i + 1);
+      console.log(i, currenCommands);
+      if (currenCommands.length > 1) svggeos.push((end ? handleClosedPath : handleOpenPath)(currenCommands));
+      leftoverCommands = leftoverCommands.slice(0, i);
+      end = true;
     }
-  ];
+  }
+
+  if (leftoverCommands.length > 1) svggeos.push((end ? handleClosedPath : handleOpenPath)(leftoverCommands));
+
+  return svggeos;
 };
 
-const parsePath = (props: Record<string, string | number>): SVGPolygonType => {
-  const commands = parseSVG(props.d as string);
-
-  return { type: 'polygon', points: commandArrayParser(commands) };
-};
+const parsePath = (props: Record<string, string | number>): SVGGeometryType[] =>
+  commandArrayParser(parseSVG(props.d as string));
 
 const rectToPolygonType = (w: number, h: number, x: number, y: number): SVGPolygonType => ({
   type: 'polygon',
@@ -85,7 +99,7 @@ const parsePoints = (points: string): Coordinate[] => {
     const [rawX, rawY] = pointsArray[i].split(',');
     const x = getNumberForValue(rawX);
     const y = getNumberForValue(rawY);
-    if (x && y) coordinates.push({ x, y });
+    if (x !== null && y !== null) coordinates.push({ x, y });
   }
 
   return coordinates;
@@ -100,20 +114,20 @@ const parsePolygon = (props: Record<string, string | number>): SVGPolygonType | 
 };
 
 const parsePolyline = (props: Record<string, string | number>): SVGPolylineType | null => {
-  const { points, strokeWidth } = props;
+  const { points } = props;
 
   const parsedPoints = points ? parsePoints(points as string) : [];
-  const thickness = getNumberForValue(strokeWidth) ?? 0.0;
+  const thickness = getNumberForValue(props['stroke-width']) ?? 0.0;
 
   if (parsedPoints.length > 0) return { type: 'polyline', thickness, points: parsedPoints };
   return null;
 };
 
 const parseLine = (props: Record<string, string | number>): SVGPolylineType | null => {
-  const { x1, y1, x2, y2, strokeWidth } = props;
+  const { x1, y1, x2, y2 } = props;
 
   const [castX1, castY1, castX2, castY2] = getNumberForValues(x1, y1, x2, y2);
-  const thickness = getNumberForValue(strokeWidth) ?? 0.0;
+  const thickness = getNumberForValue(props['stroke-width']) ?? 0.0;
 
   if (castX1 !== null && castY1 !== null && castX2 !== null && castY2 !== null)
     return {
@@ -148,7 +162,7 @@ export function parseSvg(svgString: string) {
     if (!svgChild.properties) continue;
     switch (svgChild.tagName) {
       case 'path':
-        svgGeometryTypes.push(parsePath(svgChild.properties));
+        svgGeometryTypes.push(...parsePath(svgChild.properties));
         break;
       case 'rect':
         const rectResult = parseRect(svgChild.properties);

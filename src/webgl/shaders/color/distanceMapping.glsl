@@ -1,5 +1,6 @@
 // Custom color function that uses time to offset the phase
 vec3 getColor(float d) {
+  d *= .005;
   // Base color calculation
   vec3 color = vec3(1.0) - sign(d) * vec3(0.1, 0.4, 0.7);
   

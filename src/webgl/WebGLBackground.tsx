@@ -13,7 +13,7 @@ interface WebGLBackgroundProps {
   costumScale?: number
 }
 
-const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction = sdfLibrary.defaultSdf, colorFunction = colorLibrary.colorMapping, preprocessorFunction = preprocessorLibrary.defaultProcessor, costumScale = 1.0 }) => {
+const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction = sdfLibrary.defaultSdf, colorFunction = colorLibrary.colorMapping, preprocessorFunction = preprocessorLibrary.noscalingProcessor, costumScale = 1.0 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -117,7 +117,7 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
       gl.deleteShader(fragmentShader);
       gl.deleteBuffer(positionBuffer);
     };
-  }, [sdfFunction, dimensions]);
+  }, [sdfFunction, dimensions, costumScale, colorFunction, preprocessorFunction]);
 
   // Helper function to create shader
   function createShader(gl: WebGLRenderingContext, type: number, source: string) {

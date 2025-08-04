@@ -11,7 +11,7 @@ const WebGLBackgroundExample: React.FC = () => {
         sdfFunction={sdfLibrary.noiseSimplex}
         colorFunction={colorLibrary.blackAndWhiteMapping}
         preprocessorFunction={preprocessorLibrary.pixelateProcessor}
-        costumScale={0.15}
+        costumScale={0.8e5}
       >
         <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
           <h1>Noise-based WebGL Background</h1>
@@ -41,7 +41,6 @@ const WebGLBackgroundExample: React.FC = () => {
         sdfFunction={sdfLibrary.morphingSdf}
         colorFunction={colorLibrary.hsvMapping}
         preprocessorFunction={preprocessorLibrary.tilingSymmetricProcessor}
-        costumScale={0.0025}
       >
         <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
           <h1>WebGL Background Example</h1>

@@ -9,6 +9,7 @@ vec3 hsv2rgb(vec3 c) {
 vec3 getColor(float d) {
   // Use the distance value to determine the hue
   // Map distance to a cyclical hue value (0.0 to 1.0)
+  d *= .005;
   float hue = fract(abs(d) * 3.0 + u_time * 0.1);
   
   // Inside vs outside coloring

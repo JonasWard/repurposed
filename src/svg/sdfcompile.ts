@@ -5,7 +5,7 @@ import { Coordinate, SVGCircleType, SVGGeometryType, SVGPolygonType, SVGPolyline
 
 const getFormattedNumber = (n: number) => n.toFixed(6);
 const getVec2 = (c: Coordinate) => `vec2(${getFormattedNumber(c.x)}, ${getFormattedNumber(c.y)})`;
-const getVec2s = (cs: Coordinate[]) => cs.map((c) => getVec2(c)).join(',\n');
+const getVec2s = (cs: Coordinate[]) => cs.map((c) => getVec2(c)).join(',\n\t\t');
 
 /**
  * @param sdfMethod - base string sdf fragment shader method for a given geometry type
@@ -13,9 +13,10 @@ const getVec2s = (cs: Coordinate[]) => cs.map((c) => getVec2(c)).join(',\n');
  * @returns [name of method, updated base method string with new name embedded]
  */
 const parseSdfMethodName = (sdfMethod: string, index: number): [string, string] => {
-  const [partA, partB] = sdfMethod.split('(');
+  const splitIndex = sdfMethod.indexOf('(');
+  const partA = sdfMethod.slice(0, splitIndex);
   const name = `${partA.replace('float ', '')}${index}`;
-  return [name, `float ${name}(${partB}`];
+  return [name, `float ${name}${sdfMethod.slice(splitIndex)}`];
 };
 
 const sdfMethodsMap: Record<SVGGeometryType['type'], string> = {
@@ -75,7 +76,7 @@ float sdf(vec2 p) {
   float d = ${mNDef[0][0]}(p);
 ${mNDef
   .slice(1)
-  .map(([name]) => `  d = min(d, ${name}(p));`)
+  .map(([name]) => `\t\td = min(d, ${name}(p));`)
   .join('\n')}  
   return d;
 }`;

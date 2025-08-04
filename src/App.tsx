@@ -4,6 +4,7 @@ import WebGLBackground from './webgl/WebGLBackground';
 import { parseSvg } from './svg/svgparse';
 import { getDistanceMethod } from './svg/sdfcompile';
 import { colorLibrary } from './webgl/shaders/colorLibrary';
+import { preprocessorLibrary } from './webgl/shaders/preprocessorLibrary';
 
 const defaultSvg = `<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
   <circle cx="50" cy="50" r="30" />
@@ -12,11 +13,7 @@ const defaultSvg = `<svg width="200" height="200" xmlns="http://www.w3.org/2000/
   <polyline points="20,120 60,140 100,120 140,140" stroke-width="5" />
 </svg>`;
 
-const colorMappingOptions = [
-  { key: 'colorMapping', label: 'Distance Mapping', value: colorLibrary.colorMapping },
-  { key: 'hsvMapping', label: 'HSV Mapping', value: colorLibrary.hsvMapping },
-  { key: 'blackAndWhiteMapping', label: 'Black & White', value: colorLibrary.blackAndWhiteMapping }
-];
+const colorMappingOptions = Object.entries(colorLibrary).map(([key, value]) => ({ key, label: key, value }));
 
 export function App() {
   const [svgInput, setSvgInput] = useState(defaultSvg);
@@ -29,7 +26,9 @@ export function App() {
       if (geometries.length === 0) {
         return 'float sdf(vec2 p) { return length(p) - 50.0; }'; // fallback circle
       }
-      return getDistanceMethod(...geometries);
+      const sdf = getDistanceMethod(...geometries);
+      console.log(sdf);
+      return sdf;
     } catch (error) {
       console.error('Error parsing SVG:', error);
       return 'float sdf(vec2 p) { return length(p) - 50.0; }'; // fallback circle
@@ -38,7 +37,12 @@ export function App() {
 
   return (
     <div className="w-full h-screen">
-      <WebGLBackground sdfFunction={sdfFunction} colorFunction={selectedColorMapping.value} costumScale={scale}>
+      <WebGLBackground
+        sdfFunction={sdfFunction}
+        colorFunction={selectedColorMapping.value}
+        preprocessorFunction={preprocessorLibrary.noscalingProcessor}
+        costumScale={scale}
+      >
         <div className="max-w-4xl mx-auto p-6">
           <h1 className="text-4xl font-bold mb-6 text-white">SVG Distance Field Renderer</h1>
 

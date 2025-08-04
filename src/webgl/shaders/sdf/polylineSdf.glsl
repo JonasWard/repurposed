@@ -12,9 +12,9 @@ float sdPolyline(vec2 p) {
         vec2 b = vertices[i + 1];
         vec2 pa = p - a;
         vec2 ba = b - a;
-        float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+        float h = abs(clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0));
         vec2 closest = a + h * ba;
-        d = min(d, distance(p, closest));
+        d = abs(min(d, distance(p, closest)));
     }
     
     return d - ${thickness} * 0.5;
