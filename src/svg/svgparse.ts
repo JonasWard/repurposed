@@ -16,17 +16,33 @@ const getNumberForValue = (value: svgPropType): number | null => {
 
 const getNumberForValues = (...vs: svgPropType[]) => vs.map(getNumberForValue);
 
+const coordinateBuilder = (commands: (MoveToCommand | LineToCommand)[]) => {
+  const coordinates: Coordinate[] = [];
+  for (const c of commands) {
+    if (c.command === 'moveto' || c.command === 'lineto') {
+      if (c.relative)
+        coordinates.push({
+          x: c.x + (coordinates[coordinates.length - 1]?.x ?? 0.0),
+          y: c.y + (coordinates[coordinates.length - 1]?.y ?? 0.0)
+        });
+      else coordinates.push({ x: c.x, y: c.y });
+    }
+  }
+
+  return coordinates;
+};
+
 const handleClosedPath = (commands: Command[]): SVGPolygonType => ({
   type: 'polygon',
-  points: (commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]).map(
-    ({ x, y }) => ({ x, y })
+  points: coordinateBuilder(
+    commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]
   )
 });
 
 const handleOpenPath = (commands: Command[]): SVGPolylineType => ({
   type: 'polyline',
-  points: (commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]).map(
-    ({ x, y }) => ({ x, y })
+  points: coordinateBuilder(
+    commands.filter((c) => ['moveto', 'lineto'].includes(c.command)) as (MoveToCommand | LineToCommand)[]
   ),
   thickness: 0
 });
