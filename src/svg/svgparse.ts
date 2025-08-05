@@ -42,7 +42,6 @@ const commandArrayParser = (commands: Command[]): SVGGeometryType[] => {
   for (let i = leftoverCommands.length - 1; i >= 0; i -= 1) {
     if (leftoverCommands[i].command === 'closepath') {
       const currenCommands = leftoverCommands.slice(i + 1);
-      console.log(i, currenCommands);
       if (currenCommands.length > 1) svggeos.push((end ? handleClosedPath : handleOpenPath)(currenCommands));
       leftoverCommands = leftoverCommands.slice(0, i);
       end = true;
