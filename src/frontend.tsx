@@ -7,7 +7,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { createHashRouter, RouterProvider } from 'react-router';
-import { App } from './App';
+import { App } from './SVGApp';
 import { WebGLBackgroundExample } from './webgl';
 
 let router = createHashRouter([
