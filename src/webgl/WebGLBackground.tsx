@@ -193,7 +193,7 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden">
       <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full -z-10" />
-      <div className="relative z-10 max-w-[1200px] m-auto p-4">{children}</div>
+      <div className="relative z-10 max-w-[1200px] mx-auto">{children}</div>
     </div>
   );
 };
