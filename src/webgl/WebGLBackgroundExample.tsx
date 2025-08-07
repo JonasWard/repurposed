@@ -50,13 +50,23 @@ const WebGLBackgroundExample: React.FC = () => {
           <p>Adding more content changes the canvas size.</p>
         </div>
       </WebGLBackground>
-      <WebGLBackground sdfFunction={sdfLibrary.gridDistanceSdf} colorFunction={colorLibrary.colorMapping}>
+      <WebGLBackground sdfFunction={sdfLibrary.gridDistanceSdf} colorFunction={colorLibrary.normalAngleHue}>
         <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
           <h1>WebGL Background Example</h1>
           <p>This content determines the size of the component.</p>
           <p>The WebGL canvas adapts to fit this content.</p>
           <div className="h-[200px]"></div>
           <p>Adding more content changes the canvas size.</p>
+        </div>
+      </WebGLBackground>
+      <WebGLBackground sdfFunction={sdfLibrary.hexGridSdf} colorFunction={colorLibrary.colorMapping}>
+        <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
+          <div className="h-[500px]"></div>
+        </div>
+      </WebGLBackground>
+      <WebGLBackground sdfFunction={sdfLibrary.triangleGridSdf} colorFunction={colorLibrary.hsvMapping}>
+        <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)]">
+          <div className="h-[500px]"></div>
         </div>
       </WebGLBackground>
       <WebGLBackground sdfFunction={sdfLibrary.ringsSdf}>

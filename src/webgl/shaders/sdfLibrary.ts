@@ -11,6 +11,8 @@ import defaultSdf from './sdf/defaultSdf.glsl' with {type: "text"};
 import polygonSdf from './sdf/polygonSdf.glsl' with {type: "text"};
 import polylineSdf from './sdf/polylineSdf.glsl' with {type: "text"};
 import gridDistanceSdf from './sdf/gridDistanceSdf.glsl' with {type: "text"};
+import hexGridSdf from './sdf/hexGridSdf.glsl' with {type: "text"};
+import triangleGridSdf from './sdf/triangleGridSdf.glsl' with {type: "text"};
 
 export const sdfLibrary = {
   defaultSdf,
@@ -25,5 +27,7 @@ export const sdfLibrary = {
   noiseSimplex,
   polygonSdf,
   polylineSdf,
-  gridDistanceSdf
+  gridDistanceSdf,
+  hexGridSdf,
+  triangleGridSdf
 };
