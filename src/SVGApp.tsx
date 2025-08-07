@@ -25,11 +25,45 @@ const polylineSvg = `<svg width="200" height="200" xmlns="http://www.w3.org/2000
 
 const colorMappingOptions = Object.entries(colorLibrary).map(([key, value]) => ({ key, label: key, value }));
 
+// SVG Overlay component that matches the WebGL coordinate system
+function SvgOverlay({ svgContent, scale }: { svgContent: string; scale: number }) {
+
+  return (
+    <div 
+      className="absolute inset-0 pointer-events-none"
+      style={{ 
+        zIndex: 5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100svw',
+        height: '100svh',
+      }}
+    >
+      <img
+        src={'data:image/svg+xml,'+svgContent}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: `translate(-50%, -50%) scaleY(-1)`,
+          transformOrigin: 'center',
+          width: 200/scale,
+          height: 200/scale,
+          maxWidth: 'none',
+          maxHeight: 'none'
+        }}
+      />
+    </div>
+  );
+}
+
 export function App() {
   const [svgInput, setSvgInput] = useState(defaultSvg);
   const [selectedColorMapping, setSelectedColorMapping] = useState(colorMappingOptions[0]);
   const [scale, setScale] = useState(1.0);
   const [showConfig, setShowConfig] = useState(false);
+  const [showSvgOverlay, setShowSvgOverlay] = useState(false);
 
   const sdfFunction = useMemo(() => {
     try {
@@ -54,6 +88,8 @@ export function App() {
         preprocessorFunction={preprocessorLibrary.noscalingProcessor}
         costumScale={scale}
       >
+        {/* SVG Overlay */}
+        {showSvgOverlay && <SvgOverlay svgContent={svgInput} scale={scale} />}
         {/* Toggle Button */}
         <button
           onClick={() => setShowConfig(!showConfig)}
@@ -112,6 +148,22 @@ export function App() {
                       onChange={(e) => setScale(parseFloat(e.target.value))}
                       className="w-full"
                     />
+                  </div>
+
+                  {/* SVG Overlay Toggle */}
+                  <div className="mb-4">
+                    <label className="flex items-center text-white">
+                      <input
+                        type="checkbox"
+                        checked={showSvgOverlay}
+                        onChange={(e) => setShowSvgOverlay(e.target.checked)}
+                        className="mr-2"
+                      />
+                      Show SVG Overlay
+                    </label>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Display the original SVG with the same scale as the SDF
+                    </p>
                   </div>
 
                   {/* Info */}
