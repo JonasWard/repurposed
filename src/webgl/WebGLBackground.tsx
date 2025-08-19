@@ -11,9 +11,11 @@ interface WebGLBackgroundProps {
   colorFunction?: string; // Custom Color function as a string (can include getColor function)
   preprocessorFunction?: string;
   costumScale?: number
+  intensity?: number
+  minIntensity?: number
 }
 
-const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction = sdfLibrary.defaultSdf, colorFunction = colorLibrary.colorMapping, preprocessorFunction = preprocessorLibrary.noscalingProcessor, costumScale = 1.0 }) => {
+const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction = sdfLibrary.defaultSdf, colorFunction = colorLibrary.colorMapping, preprocessorFunction = preprocessorLibrary.noscalingProcessor, costumScale = 1.0, intensity = 1.0, minIntensity = 0.0 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -33,7 +35,9 @@ const WebGLBackground: React.FC<WebGLBackgroundProps> = ({ children, sdfFunction
       .replace('${sdfFunction}', sdfFunction )
       .replace('${colorFunction}', colorFunction)
       .replace('${preProcessor}', preprocessorFunction)
-      .replace('${scale}', costumScale.toFixed(5));
+      .replace('${intensity}', intensity.toFixed(5))
+      .replace('${minIntensity}', minIntensity.toFixed(5))
+      .replaceAll('${scale}', costumScale.toFixed(5));
 
     // Compile shaders
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);

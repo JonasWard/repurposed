@@ -1,6 +1,7 @@
 #ifdef GL_ES
 precision mediump float;
 #endif
+const vec2 c = vec2(1./${scale});
 
 // Some useful functions
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -77,5 +78,6 @@ float snoise(vec2 v) {
 }
 
 float sdf(vec2 st) {
-    return snoise(st);
+    float a = u_time * .05 * ${scale};
+    return snoise(rotate(st + c, a) - c) ;
 }

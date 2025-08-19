@@ -42,7 +42,7 @@ vec3 getColor(float d) {
   color = mix(color, edgeColor, edgeIntensity * 0.8);
   
   // Add subtle bands/rings based on distance
-  float bands = sin(d * 50.0 + u_time) * 0.5 + 0.5;
+  float bands = sin(d * 5.0 + u_time) * 0.5 + 0.5;
   color *= 0.8 + 0.2 * bands;
   
   return color;

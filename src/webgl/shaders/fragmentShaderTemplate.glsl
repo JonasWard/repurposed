@@ -7,6 +7,12 @@ const float scale = ${scale};
 
 out vec4 fragColor;
 
+vec2 rotate(vec2 p, float a) {
+  float c = cos(a);
+  float s = sin(a);
+  return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
+}
+
 // location of the preprocessor definition
 ${preProcessor}
 
@@ -27,7 +33,7 @@ void main() {
   float d = sdf(st * scale);
   
   // Use the getColor function to visualize the SDF with time-based effects
-  vec3 color = getColor(d / scale);
+  vec3 color = getColor(d / scale) * ${intensity} + ${minIntensity};
   
   fragColor = vec4(color, 1.0);
 }

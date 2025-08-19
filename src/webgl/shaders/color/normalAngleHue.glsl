@@ -38,8 +38,8 @@ vec3 getColor(float d) {
   vec3 color = hsv2rgb(vec3(hue, saturation, value));
   
   // Add smooth white lines every 10 units of distance
-  float lineSpacing = 10.0;
-  float lineWidth = 1.0;
+  float lineSpacing = 20.0;
+  float lineWidth = 1.5;
   
   // Calculate distance modulo for repeating lines
   float distMod = mod(abs(d), lineSpacing);
