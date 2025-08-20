@@ -8,8 +8,8 @@ float squareSdf(vec2 p) {
 }
 
 float sdf(vec2 p) {
-  float circle = circleSdf(p + vec2(-1, 1));
-  float square = squareSdf(p + vec2(1, -1));
+  float circle = circleSdf(p + vec2(-1.25, -1.95));
+  float square = squareSdf(p + vec2(.9, -1.1));
   
   // Use sin of time to oscillate between circle and square
   float t = sin(u_time) * 0.5 + 0.5;

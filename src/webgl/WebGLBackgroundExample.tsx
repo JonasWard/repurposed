@@ -14,7 +14,7 @@ const WebGLBackgroundExample: React.FC = () => {
         intensity={0.2}
         minIntensity={0.8}
       >
-        <div className="p-8 text-black text-4xl [text-shadow:0_0_10px_rgba(255,255,255,1.0)] h-[100svh]">
+        <div className="p-8 text-black text-4xl [text-shadow:0_0_10px_rgba(255,255,255,1.0)] min-h-[100vh]">
           <h1>Noise-based WebGL Background</h1>
           <p>This background uses animated noise functions to create organic shapes.</p>
           <p>The noise creates both the shape and the coloring pattern.</p>
@@ -25,27 +25,17 @@ const WebGLBackgroundExample: React.FC = () => {
       <WebGLBackground
         sdfFunction={sdfLibrary.roundedBoxSdf}
         // preprocessorFunction={preprocessorLibrary.tilingProcessor}
-        costumScale={1.0}
+        costumScale={1200 / Math.min(window.innerWidth, window.innerHeight)}
         colorFunction={colorLibrary.normalAngleHue}
-        intensity={0.45}
-        minIntensity={0.55}
+        intensity={0.15}
+        minIntensity={0.85}
       >
-        <div className="p-8 text-black text-2xl [text-shadow:0_0_10px_rgba(255,255,255,1.0)] h-[100svh]">
+        <div className="p-8 text-black text-2xl [text-shadow:0_0_10px_rgba(255,255,255,1.0)] min-h-[100vh]">
           <h1>WebGL Background Example</h1>
           <p>This content determines the size of the component.</p>
           <p>The WebGL canvas adapts to fit this content.</p>
           <div className="h-[200px]"></div>
           <p>Adding more content changes the canvas size.</p>
-        </div>
-      </WebGLBackground>
-      <WebGLBackground
-        sdfFunction={sdfLibrary.morphingSdf}
-        colorFunction={colorLibrary.blackAndWhiteMapping}
-        preprocessorFunction={preprocessorLibrary.tilingProcessor}
-        costumScale={0.1}
-      >
-        <div className="p-8 text-8xl text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)] min-h-[100svh]">
-          <p className="flex justify-center items-center h-screen">HSV</p>
         </div>
       </WebGLBackground>
       <WebGLBackground sdfFunction={sdfLibrary.quadGridSdf} colorFunction={colorLibrary.colorMapping}>
@@ -57,7 +47,17 @@ const WebGLBackgroundExample: React.FC = () => {
           <p>Adding more content changes the canvas size.</p>
         </div>
       </WebGLBackground>
-      <WebGLBackground sdfFunction={sdfLibrary.hexGridSdf} colorFunction={colorLibrary.colorMapping}>
+      <WebGLBackground
+        sdfFunction={sdfLibrary.morphingSdf}
+        colorFunction={colorLibrary.blackAndWhiteMapping}
+        preprocessorFunction={preprocessorLibrary.tilingProcessor}
+        costumScale={0.025}
+      >
+        <div className="p-8 text-8xl text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)] min-h-[100svh]">
+          <p className="flex justify-center items-center h-screen">Black & White</p>
+        </div>
+      </WebGLBackground>
+      <WebGLBackground sdfFunction={sdfLibrary.hexGridSdf} colorFunction={colorLibrary.normalAngleHue}>
         <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)] min-h-[100svh]">
           <div className="h-[500px]"></div>
         </div>

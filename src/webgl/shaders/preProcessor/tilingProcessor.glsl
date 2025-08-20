@@ -1,5 +1,5 @@
-const vec2 tile = vec2(400.0, 150.0);
-const float baseDistance = 25.0;
+const vec2 tile = vec2(250.0, 250.0);
+const float baseDistance = 75.0;
 
 vec2 preProcessor(vec2 p) {
   p -= u_resolution.xy * .5;
