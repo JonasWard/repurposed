@@ -114,9 +114,10 @@ const GeomFilterDropdown: React.FC<{
   onHeight: (v: [number, number]) => void;
   onLength: (v: [number, number]) => void;
   onReset: () => void;
-}> = ({ union, widthRange, heightRange, lengthRange, onWidth, onHeight, onLength, onReset }) => {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}> = ({ union, widthRange, heightRange, lengthRange, onWidth, onHeight, onLength, onReset, open, setOpen }) => {
   const { t } = useTranslation('common');
-  const [open, setOpen] = useState(false);
 
   const isActive =
     widthRange[0] > union.width[0] || widthRange[1] < union.width[1] ||
@@ -126,7 +127,7 @@ const GeomFilterDropdown: React.FC<{
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen(!open)}
         className={`flex items-center gap-2 px-2.5 py-1 text-sm border bg-white transition-colors ${
           isActive ? 'border-gray-800 text-gray-900' : 'border-gray-300 text-gray-700 hover:border-gray-500'
         }`}
@@ -396,6 +397,8 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
 
   const geomUnion = computeUnion(activeTypes);
 
+  const [geomOpen, setGeomOpen] = useState(false);
+
   const resetGeom = () => {
     setWidthRange(geomUnion.width);
     if (geomUnion.height) setHeightRange(geomUnion.height);
@@ -416,6 +419,7 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
     if (fullUnion.height) setHeightRange(fullUnion.height);
     if (fullUnion.length) setLengthRange(fullUnion.length);
     setActiveColours(new Set());
+    setGeomOpen(false);
   };
 
   // Apply filters
@@ -462,6 +466,8 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
               onHeight={setHeightRange}
               onLength={setLengthRange}
               onReset={resetGeom}
+              open={geomOpen}
+              setOpen={setGeomOpen}
             />
             <ColourMultiSelect
               availableColours={availableColours}
