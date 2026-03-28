@@ -1,0 +1,21 @@
+{
+  "heading": "Compositeur de surface",
+  "area": "Surface",
+  "direction": "Direction",
+  "horizontal": "Horizontal",
+  "vertical": "Vertical",
+  "export-rhino-json": "Exporter JSON Rhino",
+  "unit-face": "face",
+  "units-needed": "unités nécessaires",
+  "units-available": "unités disponibles",
+  "coverage": "couverture",
+  "sufficient": "Suffisant",
+  "insufficient": "Partiel",
+  "not-composable": "N/A",
+  "no-face-for-direction": "Aucune face pour cette direction",
+  "no-results": "Aucune annonce ne correspond aux filtres",
+  "select-all": "Tout sélectionner",
+  "deselect-all": "Tout désélectionner",
+  "select-to-see-coverage": "Sélectionnez des annonces pour calculer la couverture",
+  "set-area-to-see-coverage": "Entrez une surface cible pour calculer la couverture"
+}

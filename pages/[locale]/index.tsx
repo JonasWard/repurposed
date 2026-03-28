@@ -19,6 +19,9 @@ const Homepage = () => {
         <Button className="px-4" href={'/tinder-slides'}>
           {t('to-element-swiping')}
         </Button>
+        <Button className="px-4" href={'/area-composer'}>
+          {t('to-area-composer')}
+        </Button>
         <Button className="px-4" href={'/add-listing'}>
           {t('add-listing')}
         </Button>

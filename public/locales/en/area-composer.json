@@ -1,0 +1,21 @@
+{
+  "heading": "Area Composer",
+  "area": "Area",
+  "direction": "Direction",
+  "horizontal": "Horizontal",
+  "vertical": "Vertical",
+  "export-rhino-json": "Export Rhino JSON",
+  "unit-face": "face",
+  "units-needed": "units needed",
+  "units-available": "units available",
+  "coverage": "coverage",
+  "sufficient": "Sufficient",
+  "insufficient": "Partial",
+  "not-composable": "N/A",
+  "no-face-for-direction": "No face for this direction",
+  "no-results": "No listings match the current filters",
+  "select-all": "Select all",
+  "deselect-all": "Deselect all",
+  "select-to-see-coverage": "Select listings to compute coverage",
+  "set-area-to-see-coverage": "Enter a target area to compute coverage"
+}

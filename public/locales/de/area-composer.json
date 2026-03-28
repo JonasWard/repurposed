@@ -1,0 +1,21 @@
+{
+  "heading": "Flächenkomponist",
+  "area": "Fläche",
+  "direction": "Richtung",
+  "horizontal": "Horizontal",
+  "vertical": "Vertikal",
+  "export-rhino-json": "Rhino JSON exportieren",
+  "unit-face": "Fläche",
+  "units-needed": "Einheiten benötigt",
+  "units-available": "Einheiten verfügbar",
+  "coverage": "Abdeckung",
+  "sufficient": "Ausreichend",
+  "insufficient": "Teilweise",
+  "not-composable": "N/A",
+  "no-face-for-direction": "Keine Fläche für diese Richtung",
+  "no-results": "Keine Inserate entsprechen den Filtern",
+  "select-all": "Alle auswählen",
+  "deselect-all": "Auswahl aufheben",
+  "select-to-see-coverage": "Inserate auswählen, um die Abdeckung zu berechnen",
+  "set-area-to-see-coverage": "Zielfläche eingeben, um die Abdeckung zu berechnen"
+}

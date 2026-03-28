@@ -20,5 +20,20 @@
   "content": "Detailliert",
   "placeholder": "Beispieldaten",
   "add-listing": "Inserat erstellen",
-  "edit-listing": "Inserat bearbeiten"
+  "to-area-composer": "Flächenkomponist",
+  "edit-listing": "Inserat bearbeiten",
+  "all-types": "Alle Typen",
+  "clear-filter": "Filter zurücksetzen",
+  "clear-all-filters": "Alle Filter zurücksetzen",
+  "dimensions": "Abmessungen",
+  "width": "Breite",
+  "height": "Höhe",
+  "length": "Länge",
+  "all-colours": "Alle Farben",
+  "colour-red": "Rot",
+  "colour-yellow": "Gelb",
+  "colour-brown": "Braun",
+  "colour-blue": "Blau",
+  "colour-white": "Weiß",
+  "colour-green": "Grün"
 }

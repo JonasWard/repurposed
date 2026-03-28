@@ -20,5 +20,20 @@
   "content": "Detail",
   "placeholder": "Example Data",
   "add-listing": "Add a listing",
-  "edit-listing": "Edit listing"
+  "to-area-composer": "Area Composer",
+  "edit-listing": "Edit listing",
+  "all-types": "All types",
+  "clear-filter": "Clear filter",
+  "clear-all-filters": "Clear all filters",
+  "dimensions": "Dimensions",
+  "width": "Width",
+  "height": "Height",
+  "length": "Length",
+  "all-colours": "All colours",
+  "colour-red": "Red",
+  "colour-yellow": "Yellow",
+  "colour-brown": "Brown",
+  "colour-blue": "Blue",
+  "colour-white": "White",
+  "colour-green": "Green"
 }

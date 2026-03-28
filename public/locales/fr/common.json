@@ -20,5 +20,20 @@
   "content": "Détaillé",
   "placeholder": "Données d'exemple",
   "add-listing": "Ajouter une annonce",
-  "edit-listing": "Modifier l'annonce"
+  "to-area-composer": "Compositeur de surface",
+  "edit-listing": "Modifier l'annonce",
+  "all-types": "Tous les types",
+  "clear-filter": "Effacer le filtre",
+  "clear-all-filters": "Effacer tous les filtres",
+  "dimensions": "Dimensions",
+  "width": "Largeur",
+  "height": "Hauteur",
+  "length": "Longueur",
+  "all-colours": "Toutes les couleurs",
+  "colour-red": "Rouge",
+  "colour-yellow": "Jaune",
+  "colour-brown": "Brun",
+  "colour-blue": "Bleu",
+  "colour-white": "Blanc",
+  "colour-green": "Vert"
 }
