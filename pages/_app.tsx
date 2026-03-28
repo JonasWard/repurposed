@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { useRepurposedStore, LOCAL_STORAGE_KEY_LIKED, LOCAL_STORAGE_KEY_DISLIKED } from '@/lib/store';
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convex = process.env.NEXT_PUBLIC_CONVEX_URL
+  ? new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL)
+  : null;
 
 const RepurposedMarketplace = ({ Component, pageProps }: { Component: any; pageProps: any }) => {
   useEffect(() => {
@@ -20,6 +22,8 @@ const RepurposedMarketplace = ({ Component, pageProps }: { Component: any; pageP
       }));
     }
   }, []);
+
+  if (!convex) return <Component {...pageProps} />;
 
   return (
     <ConvexProvider client={convex}>
