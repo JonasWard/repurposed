@@ -299,7 +299,7 @@ const ListingsTable: React.FC = () => {
               animateRows
               pagination
               paginationPageSize={50}
-              style={{ height: '100%', width: '100%' }}
+              className="h-full w-full"
             />
           </div>
         </div>
