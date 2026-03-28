@@ -14,29 +14,27 @@
  *   - custom     { geometry: THREE.BufferGeometry }  — bring-your-own geometry
  */
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import {
-  OrbitControls,
-  GizmoHelper,
-  GizmoViewport,
-  Stats,
-  Environment,
-  Edges,
-} from '@react-three/drei';
+import { OrbitControls, GizmoHelper, GizmoViewport, Stats, Environment, Edges } from '@react-three/drei';
 import * as THREE from 'three';
 
 // ── Spec types ────────────────────────────────────────────────────────────────
 
-export type BoxSpec        = { kind: 'box';      w: number; h: number; d: number };
-export type SphereSpec     = { kind: 'sphere';   radius: number; widthSegs?: number; heightSegs?: number };
-export type CylinderSpec   = { kind: 'cylinder'; radiusTop: number; radiusBottom: number; height: number; radialSegs?: number };
-export type TorusSpec      = { kind: 'torus';    radius: number; tube: number; radialSegs?: number; tubularSegs?: number };
-export type PlaneSpec      = { kind: 'plane';    w: number; h: number };
-export type CustomSpec     = { kind: 'custom';   geometry: THREE.BufferGeometry };
+export type BoxSpec = { kind: 'box'; w: number; h: number; d: number };
+export type SphereSpec = { kind: 'sphere'; radius: number; widthSegs?: number; heightSegs?: number };
+export type CylinderSpec = {
+  kind: 'cylinder';
+  radiusTop: number;
+  radiusBottom: number;
+  height: number;
+  radialSegs?: number;
+};
+export type TorusSpec = { kind: 'torus'; radius: number; tube: number; radialSegs?: number; tubularSegs?: number };
+export type PlaneSpec = { kind: 'plane'; w: number; h: number };
+export type CustomSpec = { kind: 'custom'; geometry: THREE.BufferGeometry };
 
-export type GeometrySpec =
-  | BoxSpec | SphereSpec | CylinderSpec | TorusSpec | PlaneSpec | CustomSpec;
+export type GeometrySpec = BoxSpec | SphereSpec | CylinderSpec | TorusSpec | PlaneSpec | CustomSpec;
 
 // ── Build geometry from spec ──────────────────────────────────────────────────
 
@@ -47,13 +45,9 @@ function buildGeometry(spec: GeometrySpec): THREE.BufferGeometry {
     case 'sphere':
       return new THREE.SphereGeometry(spec.radius, spec.widthSegs ?? 32, spec.heightSegs ?? 32);
     case 'cylinder':
-      return new THREE.CylinderGeometry(
-        spec.radiusTop, spec.radiusBottom, spec.height, spec.radialSegs ?? 32,
-      );
+      return new THREE.CylinderGeometry(spec.radiusTop, spec.radiusBottom, spec.height, spec.radialSegs ?? 32);
     case 'torus':
-      return new THREE.TorusGeometry(
-        spec.radius, spec.tube, spec.radialSegs ?? 16, spec.tubularSegs ?? 64,
-      );
+      return new THREE.TorusGeometry(spec.radius, spec.tube, spec.radialSegs ?? 16, spec.tubularSegs ?? 64);
     case 'plane':
       return new THREE.PlaneGeometry(spec.w, spec.h);
     case 'custom':
@@ -117,7 +111,7 @@ export const GeometryRenderer: React.FC<GeometryRendererProps> = ({
   spec = DEFAULT_SPEC,
   display = {},
   showStats = false,
-  className = '',
+  className = ''
 }) => {
   const geometry = useMemo(() => buildGeometry(spec), [spec]);
 
@@ -126,12 +120,7 @@ export const GeometryRenderer: React.FC<GeometryRendererProps> = ({
       {/* Controls overlay */}
       <ControlsOverlay display={display} />
 
-      <Canvas
-        shadows
-        camera={{ position: [2, 2, 3], fov: 45 }}
-        gl={{ antialias: true }}
-        className="flex-1"
-      >
+      <Canvas shadows camera={{ position: [2, 2, 3], fov: 45 }} gl={{ antialias: true }} className="flex-1">
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 8, 5]} intensity={1.5} castShadow />
 
@@ -140,10 +129,10 @@ export const GeometryRenderer: React.FC<GeometryRendererProps> = ({
         <SceneMesh geometry={geometry} opts={display} />
 
         <gridHelper args={[10, 10, '#555', '#333']} position={[0, -0.5, 0]} />
-        <shadowMesh position={[0, -0.499, 0]}>
+        <mesh position={[0, -0.499, 0]} receiveShadow>
           <planeGeometry args={[10, 10]} />
           <shadowMaterial opacity={0.2} />
-        </shadowMesh>
+        </mesh>
 
         <OrbitControls makeDefault />
         <GizmoHelper alignment="bottom-right" margin={[60, 60]}>
