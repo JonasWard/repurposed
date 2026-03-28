@@ -324,18 +324,21 @@ const AreaComposer = () => {
 
   const area = router.isReady && q.area ? Math.max(0, Number(q.area)) : 0;
 
-  const direction: Direction =
-    router.isReady && q.direction === 'vertical' ? 'vertical' : 'horizontal';
+  const direction: Direction = router.isReady && q.direction === 'vertical' ? 'vertical' : 'horizontal';
 
   const activeTypes: Set<ListingType> = new Set(
     router.isReady && q.types
-      ? String(q.types).split(',').filter(t => (ListingTypes as readonly string[]).includes(t)) as ListingType[]
+      ? (String(q.types)
+          .split(',')
+          .filter((t) => (ListingTypes as readonly string[]).includes(t)) as ListingType[])
       : []
   );
 
   const activeColours: Set<Colour> = new Set(
     router.isReady && q.colours
-      ? String(q.colours).split(',').filter(c => (ALL_COLOURS as readonly string[]).includes(c)) as Colour[]
+      ? (String(q.colours)
+          .split(',')
+          .filter((c) => (ALL_COLOURS as readonly string[]).includes(c)) as Colour[])
       : []
   );
 
@@ -343,23 +346,27 @@ const AreaComposer = () => {
 
   const widthRange: [number, number] = [
     q.wMin ? Math.max(geomUnion.width[0], Number(q.wMin)) : geomUnion.width[0],
-    q.wMax ? Math.min(geomUnion.width[1], Number(q.wMax)) : geomUnion.width[1],
+    q.wMax ? Math.min(geomUnion.width[1], Number(q.wMax)) : geomUnion.width[1]
   ];
-  const heightRange: [number, number] = geomUnion.height ? [
-    q.hMin ? Math.max(geomUnion.height[0], Number(q.hMin)) : geomUnion.height[0],
-    q.hMax ? Math.min(geomUnion.height[1], Number(q.hMax)) : geomUnion.height[1],
-  ] : [0, 0];
-  const lengthRange: [number, number] = geomUnion.length ? [
-    q.lMin ? Math.max(geomUnion.length[0], Number(q.lMin)) : geomUnion.length[0],
-    q.lMax ? Math.min(geomUnion.length[1], Number(q.lMax)) : geomUnion.length[1],
-  ] : [0, 0];
+  const heightRange: [number, number] = geomUnion.height
+    ? [
+        q.hMin ? Math.max(geomUnion.height[0], Number(q.hMin)) : geomUnion.height[0],
+        q.hMax ? Math.min(geomUnion.height[1], Number(q.hMax)) : geomUnion.height[1]
+      ]
+    : [0, 0];
+  const lengthRange: [number, number] = geomUnion.length
+    ? [
+        q.lMin ? Math.max(geomUnion.length[0], Number(q.lMin)) : geomUnion.length[0],
+        q.lMax ? Math.min(geomUnion.length[1], Number(q.lMax)) : geomUnion.length[1]
+      ]
+    : [0, 0];
 
   // ── Area input: local string so decimal points survive mid-type ───────────
   const [areaStr, setAreaStr] = useState('');
   useEffect(() => {
     // One-time sync from URL when router is ready
     if (router.isReady) setAreaStr(q.area ? String(q.area) : '');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
   const handleAreaChange = (raw: string) => {
@@ -370,27 +377,34 @@ const AreaComposer = () => {
 
   // ── Setters ───────────────────────────────────────────────────────────────
 
-  const setDirection = (d: Direction) =>
-    updateQuery({ direction: d === 'horizontal' ? undefined : d });
+  const setDirection = (d: Direction) => updateQuery({ direction: d === 'horizontal' ? undefined : d });
 
   // When types change, reset colours and geometry (remove those params from URL)
   const toggleType = (type: ListingType) => {
     const next = new Set(activeTypes);
     next.has(type) ? next.delete(type) : next.add(type);
     updateQuery({
-      types:   next.size > 0 ? [...next].join(',') : undefined,
+      types: next.size > 0 ? [...next].join(',') : undefined,
       colours: undefined,
-      wMin: undefined, wMax: undefined,
-      hMin: undefined, hMax: undefined,
-      lMin: undefined, lMax: undefined,
+      wMin: undefined,
+      wMax: undefined,
+      hMin: undefined,
+      hMax: undefined,
+      lMin: undefined,
+      lMax: undefined
     });
   };
-  const clearTypes = () => updateQuery({
-    types: undefined, colours: undefined,
-    wMin: undefined, wMax: undefined,
-    hMin: undefined, hMax: undefined,
-    lMin: undefined, lMax: undefined,
-  });
+  const clearTypes = () =>
+    updateQuery({
+      types: undefined,
+      colours: undefined,
+      wMin: undefined,
+      wMax: undefined,
+      hMin: undefined,
+      hMax: undefined,
+      lMin: undefined,
+      lMax: undefined
+    });
 
   const toggleColour = (c: Colour) => {
     const next = new Set(activeColours);
@@ -399,62 +413,74 @@ const AreaComposer = () => {
   };
   const clearColours = () => updateQuery({ colours: undefined });
 
-  const setWidthRange = (v: [number, number]) => updateQuery({
-    wMin: v[0] > geomUnion.width[0] ? String(v[0]) : undefined,
-    wMax: v[1] < geomUnion.width[1] ? String(v[1]) : undefined,
-  });
+  const setWidthRange = (v: [number, number]) =>
+    updateQuery({
+      wMin: v[0] > geomUnion.width[0] ? String(v[0]) : undefined,
+      wMax: v[1] < geomUnion.width[1] ? String(v[1]) : undefined
+    });
   const setHeightRange = (v: [number, number]) => {
     if (!geomUnion.height) return;
     updateQuery({
       hMin: v[0] > geomUnion.height[0] ? String(v[0]) : undefined,
-      hMax: v[1] < geomUnion.height[1] ? String(v[1]) : undefined,
+      hMax: v[1] < geomUnion.height[1] ? String(v[1]) : undefined
     });
   };
   const setLengthRange = (v: [number, number]) => {
     if (!geomUnion.length) return;
     updateQuery({
       lMin: v[0] > geomUnion.length[0] ? String(v[0]) : undefined,
-      lMax: v[1] < geomUnion.length[1] ? String(v[1]) : undefined,
+      lMax: v[1] < geomUnion.length[1] ? String(v[1]) : undefined
     });
   };
-  const resetGeom = () => updateQuery({
-    wMin: undefined, wMax: undefined,
-    hMin: undefined, hMax: undefined,
-    lMin: undefined, lMax: undefined,
-  });
+  const resetGeom = () =>
+    updateQuery({
+      wMin: undefined,
+      wMax: undefined,
+      hMin: undefined,
+      hMax: undefined,
+      lMin: undefined,
+      lMax: undefined
+    });
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
   const availableColours = computeColourOptions(activeTypes);
 
   const isGeomActive =
-    widthRange[0] > geomUnion.width[0] || widthRange[1] < geomUnion.width[1] ||
+    widthRange[0] > geomUnion.width[0] ||
+    widthRange[1] < geomUnion.width[1] ||
     !!(geomUnion.height && (heightRange[0] > geomUnion.height[0] || heightRange[1] < geomUnion.height[1])) ||
     !!(geomUnion.length && (lengthRange[0] > geomUnion.length[0] || lengthRange[1] < geomUnion.length[1]));
 
   const isAnyFilterActive = activeTypes.size > 0 || isGeomActive || activeColours.size > 0;
 
-  const clearAllFilters = () => updateQuery({
-    types: undefined, colours: undefined,
-    wMin: undefined, wMax: undefined,
-    hMin: undefined, hMax: undefined,
-    lMin: undefined, lMax: undefined,
-  });
+  const clearAllFilters = () =>
+    updateQuery({
+      types: undefined,
+      colours: undefined,
+      wMin: undefined,
+      wMax: undefined,
+      hMin: undefined,
+      hMax: undefined,
+      lMin: undefined,
+      lMax: undefined
+    });
 
   // ── Selection (local state — transient, not persisted in URL) ────────────
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const toggleSelected = (id: string) => setSelectedIds(prev => {
-    const next = new Set(prev);
-    next.has(id) ? next.delete(id) : next.add(id);
-    return next;
-  });
+  const toggleSelected = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   const selectAll = (ids: string[]) => setSelectedIds(new Set(ids));
   const deselectAll = () => setSelectedIds(new Set());
 
   // ── Filter listings ───────────────────────────────────────────────────────
 
-  const filtered = listings.filter(listing => {
+  const filtered = listings.filter((listing) => {
     if (activeTypes.size > 0 && !activeTypes.has(listing.type as ListingType)) return false;
     const g = listing.geometry as Record<string, number>;
     if (g.width < widthRange[0] || g.width > widthRange[1]) return false;
@@ -470,37 +496,53 @@ const AreaComposer = () => {
 
   // Total area that selected listings can cover, using all their available units.
   // Each listing contributes: quantity × face.u × face.v  (mm²), converted to m².
-  const selectedListings = filtered.filter(l => selectedIds.has(l._id));
+  const selectedListings = filtered.filter((l) => selectedIds.has(l._id));
   const totalCoveredArea = selectedListings.reduce((sum, l) => {
     const face = computeFace(l.geometry as Record<string, number>, l.type as ListingType, direction);
     if (!face) return sum;
     return sum + (l.quantity * face.u * face.v) / 1e6;
   }, 0);
   const coveragePct = area > 0 ? Math.min(100, (totalCoveredArea / area) * 100) : 0;
-  const allSelected = filtered.length > 0 && filtered.every(l => selectedIds.has(l._id));
+  const allSelected = filtered.length > 0 && filtered.every((l) => selectedIds.has(l._id));
 
-  // ── Rhino JSON export ─────────────────────────────────────────────────────
+  // ── Rhino JSON — copy to clipboard + open Rhino ───────────────────────────
 
-  const downloadRhinoJSON = () => {
+  const [rhinoCopied, setRhinoCopied] = useState(false);
+
+  const sendToRhino = async () => {
     const json = buildRhinoJSON(
-      selectedListings.map(l => ({
+      selectedListings.map((l) => ({
         _id: l._id,
         name: l.name,
         type: l.type,
         colour: (l as { colour?: string }).colour,
         quantity: l.quantity,
-        geometry: l.geometry as Record<string, number>,
+        geometry: l.geometry as Record<string, number>
       })),
       area,
-      direction,
+      direction
     );
-    const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `area-composition-${area}m2-${direction}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const text = JSON.stringify(json, null, 2);
+
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Fallback for browsers that block clipboard without user gesture context
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+
+    // Attempt to bring Rhino to the foreground via its registered URL scheme.
+    window.location.href = 'rhinoceros://';
+
+    setRhinoCopied(true);
+    setTimeout(() => setRhinoCopied(false), 3000);
   };
 
   return (
@@ -509,16 +551,14 @@ const AreaComposer = () => {
         heading="area-composer"
         links={[
           { href: 'all-elements', text: 'to-all-elements', icon: <SVGIcon src={listIcon.src} /> },
-          { href: '/', text: 'back-to-home', icon: <SVGIcon src={home.src} /> },
+          { href: '/', text: 'back-to-home', icon: <SVGIcon src={home.src} /> }
         ]}
       />
 
       <div className="w-full h-[calc(100svh-4.5rem)] grid grid-rows-[auto_auto_1fr] overflow-hidden max-w-standard-div">
-
         {/* ── Filter bar ── */}
         <div className="w-full bg-background z-10 pt-2 pb-1 card-grid-padding border-b border-gray-100">
           <div className="flex flex-row flex-wrap items-center gap-3">
-
             {/* Area input */}
             <div className="flex items-center gap-1.5">
               <label className="text-sm text-gray-500 whitespace-nowrap">{t('area')}</label>
@@ -528,7 +568,7 @@ const AreaComposer = () => {
                 step={0.5}
                 value={areaStr}
                 placeholder="0"
-                onChange={e => handleAreaChange(e.target.value)}
+                onChange={(e) => handleAreaChange(e.target.value)}
                 className="w-20 text-sm border border-gray-300 px-2 py-1 bg-white focus:outline-none focus:border-gray-600 tabular-nums"
               />
               <span className="text-sm text-gray-500">m²</span>
@@ -538,7 +578,7 @@ const AreaComposer = () => {
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-gray-500">{t('direction')}</span>
               <div className="flex">
-                {(['horizontal', 'vertical'] as const).map(d => (
+                {(['horizontal', 'vertical'] as const).map((d) => (
                   <button
                     key={d}
                     onClick={() => setDirection(d)}
@@ -559,11 +599,20 @@ const AreaComposer = () => {
 
             {/* Standard listing filters */}
             <TypeMultiSelect activeTypes={activeTypes} onToggle={toggleType} onClear={clearTypes} />
-            <ColourMultiSelect availableColours={availableColours} activeColours={activeColours} onToggle={toggleColour} onClear={clearColours} />
+            <ColourMultiSelect
+              availableColours={availableColours}
+              activeColours={activeColours}
+              onToggle={toggleColour}
+              onClear={clearColours}
+            />
             <GeomFilterDropdown
               union={geomUnion}
-              widthRange={widthRange} heightRange={heightRange} lengthRange={lengthRange}
-              onWidth={setWidthRange} onHeight={setHeightRange} onLength={setLengthRange}
+              widthRange={widthRange}
+              heightRange={heightRange}
+              lengthRange={lengthRange}
+              onWidth={setWidthRange}
+              onHeight={setHeightRange}
+              onLength={setLengthRange}
               onReset={resetGeom}
             />
 
@@ -584,7 +633,7 @@ const AreaComposer = () => {
             {/* Select-all toggle */}
             {filtered.length > 0 && (
               <button
-                onClick={() => allSelected ? deselectAll() : selectAll(filtered.map(l => l._id))}
+                onClick={() => (allSelected ? deselectAll() : selectAll(filtered.map((l) => l._id)))}
                 className="text-xs text-gray-500 hover:text-gray-900 whitespace-nowrap transition-colors"
               >
                 {allSelected ? t('deselect-all') : t('select-all')}
@@ -602,8 +651,7 @@ const AreaComposer = () => {
                 <span className="text-sm tabular-nums text-gray-700 whitespace-nowrap">
                   <span className="font-medium">{totalCoveredArea.toFixed(2)}</span>
                   {' / '}
-                  {area} m²
-                  {' '}
+                  {area} m²{' '}
                   <span className={`text-xs ${coveragePct >= 100 ? 'text-green-600' : 'text-gray-500'}`}>
                     ({Math.round(coveragePct)}%)
                   </span>
@@ -624,7 +672,7 @@ const AreaComposer = () => {
             <div className="card-grid-padding text-sm text-gray-400">{t('no-results')}</div>
           ) : (
             <div className="element-card-grid card-grid-padding minimal">
-              {filtered.map(listing => (
+              {filtered.map((listing) => (
                 <CoverageCard
                   key={listing._id}
                   listing={listing}
@@ -641,21 +689,23 @@ const AreaComposer = () => {
         </div>
       </div>
 
-      {/* ── Export button ── */}
+      {/* ── Send to Rhino button ── */}
       {selectedIds.size > 0 && (
         <div className="fixed bottom-6 right-6 z-20">
           <button
-            onClick={downloadRhinoJSON}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm hover:bg-gray-700 transition-colors shadow-lg"
+            onClick={sendToRhino}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm transition-colors shadow-lg ${
+              rhinoCopied ? 'bg-green-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-700'
+            }`}
           >
-            <span>⬇</span>
-            <span>{t('export-rhino-json')} ({selectedIds.size})</span>
+            <span>{rhinoCopied ? '✓' : '⬆'}</span>
+            <span>{rhinoCopied ? 'Copied — opening Rhino…' : `${t('export-rhino-json')} (${selectedIds.size})`}</span>
           </button>
         </div>
       )}
     </>
   );
-};
+};;
 
 export default AreaComposer;
 
