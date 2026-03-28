@@ -80,8 +80,7 @@ export function computeGeoUnion(active: Set<ListingType>): GeoUnion {
  */
 export function computeFace(
   geometry: Record<string, number>,
-  type: ListingType,
-  direction: Direction,
+  type: ListingType
 ): { u: number; v: number; normal: [number, number, number] } | null {
   const { width, height, length, thickness } = geometry as {
     width: number;
@@ -93,16 +92,12 @@ export function computeFace(
 
   if (type === 'bricks' || type === 'wood') {
     if (!height || !length) return null;
-    return direction === 'horizontal'
-      ? { u: length, v: width,  normal: [0, 0, 1] }
-      : { u: length, v: height, normal: [0, 1, 0] };
+    return { u: length, v: width, normal: [0, 0, 1] };
   }
 
   if (type === 'tile') {
     if (!length) return null;
-    return direction === 'horizontal'
-      ? { u: length,    v: width,     normal: [0, 0, 1] }
-      : { u: width,     v: thickness ?? 10, normal: [0, 1, 0] };
+    return { u: length, v: width, normal: [0, 0, 1] };
   }
 
   // Window: no height stored — can't compose
@@ -115,13 +110,13 @@ export function computeFace(
  */
 export function computeGrid(u: number, v: number, targetArea_mm2: number) {
   const unitsNeeded = Math.ceil(targetArea_mm2 / (u * v));
-  const cols = Math.ceil(Math.sqrt(unitsNeeded * u / v));
+  const cols = Math.ceil(Math.sqrt((unitsNeeded * u) / v));
   const rows = Math.ceil(unitsNeeded / cols);
   return {
     columns: cols,
     rows,
     unitsInGrid: cols * rows,
-    coveredArea_mm2: cols * rows * u * v,
+    coveredArea_mm2: cols * rows * u * v
   };
 }
 
@@ -157,7 +152,6 @@ export interface RhinoCompositionJSON {
   timestamp: string;
   params: {
     targetArea_m2: number;
-    direction: Direction;
   };
   elements: RhinoElement[];
 }
@@ -171,15 +165,14 @@ export function buildRhinoJSON(
     quantity: number;
     geometry: Record<string, number>;
   }>,
-  targetArea_m2: number,
-  direction: Direction,
+  targetArea_m2: number
 ): RhinoCompositionJSON {
   const targetArea_mm2 = targetArea_m2 * 1e6;
 
   const elements: RhinoElement[] = [];
 
   for (const listing of listings) {
-    const face = computeFace(listing.geometry, listing.type as ListingType, direction);
+    const face = computeFace(listing.geometry, listing.type as ListingType);
     if (!face) continue;
 
     const { u, v, normal } = face;
@@ -193,28 +186,28 @@ export function buildRhinoJSON(
       unit: listing.geometry,
       face: { u_mm: u, v_mm: v, area_mm2: u * v },
       grid: {
-        origin:     [0, 0, 0],
-        uAxis:      [1, 0, 0],
-        vAxis:      [0, 1, 0],
+        origin: [0, 0, 0],
+        uAxis: [1, 0, 0],
+        vAxis: [0, 1, 0],
         normal,
-        columns:    grid.columns,
-        rows:       grid.rows,
+        columns: grid.columns,
+        rows: grid.rows,
         uSpacing_mm: u,
-        vSpacing_mm: v,
+        vSpacing_mm: v
       },
       coverage: {
-        unitsNeeded:    grid.unitsInGrid,
+        unitsNeeded: grid.unitsInGrid,
         unitsAvailable: listing.quantity,
-        isSufficient:   listing.quantity >= grid.unitsInGrid,
-        coveredArea_m2: grid.coveredArea_mm2 / 1e6,
-      },
+        isSufficient: listing.quantity >= grid.unitsInGrid,
+        coveredArea_m2: grid.coveredArea_mm2 / 1e6
+      }
     });
   }
 
   return {
     schema: 'repurposed/area-composition/v1',
     timestamp: new Date().toISOString(),
-    params: { targetArea_m2, direction },
-    elements,
+    params: { targetArea_m2 },
+    elements
   };
 }

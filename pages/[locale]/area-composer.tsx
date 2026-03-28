@@ -213,14 +213,13 @@ const GeomFilterDropdown: React.FC<{
 
 const CoverageCard: React.FC<{
   listing: ListingData;
-  direction: Direction;
   area: number;
   selected: boolean;
   onToggle: () => void;
   t: (k: string) => string;
-}> = ({ listing, direction, area, selected, onToggle, t }) => {
+}> = ({ listing, area, selected, onToggle, t }) => {
   const g = listing.geometry as Record<string, number>;
-  const face = computeFace(g, listing.type as ListingType, direction);
+  const face = computeFace(g, listing.type as ListingType);
   const grid = face && area > 0 ? computeGrid(face.u, face.v, area * 1e6) : null;
   const isSufficient = grid ? listing.quantity >= grid.unitsInGrid : null;
 
@@ -228,16 +227,16 @@ const CoverageCard: React.FC<{
     <button
       onClick={onToggle}
       className={`flex flex-col text-left w-full overflow-hidden transition-all ${
-        selected
-          ? 'border-2 border-gray-900 shadow-md'
-          : 'border border-gray-200 hover:border-gray-400'
+        selected ? 'border-2 border-gray-900 shadow-md' : 'border border-gray-200 hover:border-gray-400'
       } bg-white`}
     >
       {/* Image / icon */}
       <div className="relative h-32 w-full bg-gray-100 flex items-center justify-center">
-        {listing.imageUrl
-          ? <img src={listing.imageUrl} alt={listing.name} className="w-full h-full object-cover" />
-          : <img src={TYPE_ICONS[listing.type as ListingType]} className="w-10 h-10 opacity-30" alt="" />}
+        {listing.imageUrl ? (
+          <img src={listing.imageUrl} alt={listing.name} className="w-full h-full object-cover" />
+        ) : (
+          <img src={TYPE_ICONS[listing.type as ListingType]} className="w-10 h-10 opacity-30" alt="" />
+        )}
         {/* Selection checkmark */}
         {selected && (
           <span className="absolute top-2 left-2 w-5 h-5 bg-gray-900 flex items-center justify-center">
@@ -246,7 +245,9 @@ const CoverageCard: React.FC<{
         )}
         {/* Status badge */}
         {grid && (
-          <span className={`absolute top-2 right-2 text-[10px] font-medium px-2 py-0.5 ${isSufficient ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+          <span
+            className={`absolute top-2 right-2 text-[10px] font-medium px-2 py-0.5 ${isSufficient ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}
+          >
             {isSufficient ? t('sufficient') : t('insufficient')}
           </span>
         )}
@@ -260,7 +261,11 @@ const CoverageCard: React.FC<{
       <div className="p-3 flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">
           <span className="text-sm font-medium text-gray-900 leading-tight">{listing.name}</span>
-          <img src={TYPE_ICONS[listing.type as ListingType]} className="w-4 h-4 opacity-50 flex-shrink-0 mt-0.5" alt="" />
+          <img
+            src={TYPE_ICONS[listing.type as ListingType]}
+            className="w-4 h-4 opacity-50 flex-shrink-0 mt-0.5"
+            alt=""
+          />
         </div>
 
         {face ? (
@@ -324,8 +329,6 @@ const AreaComposer = () => {
 
   const area = router.isReady && q.area ? Math.max(0, Number(q.area)) : 0;
 
-  const direction: Direction = router.isReady && q.direction === 'vertical' ? 'vertical' : 'horizontal';
-
   const activeTypes: Set<ListingType> = new Set(
     router.isReady && q.types
       ? (String(q.types)
@@ -374,10 +377,6 @@ const AreaComposer = () => {
     const num = parseFloat(raw);
     updateQuery({ area: !isNaN(num) && num > 0 ? String(num) : undefined });
   };
-
-  // ── Setters ───────────────────────────────────────────────────────────────
-
-  const setDirection = (d: Direction) => updateQuery({ direction: d === 'horizontal' ? undefined : d });
 
   // When types change, reset colours and geometry (remove those params from URL)
   const toggleType = (type: ListingType) => {
@@ -442,8 +441,6 @@ const AreaComposer = () => {
       lMax: undefined
     });
 
-  // ── Derived ───────────────────────────────────────────────────────────────
-
   const availableColours = computeColourOptions(activeTypes);
 
   const isGeomActive =
@@ -466,8 +463,6 @@ const AreaComposer = () => {
       lMax: undefined
     });
 
-  // ── Selection (local state — transient, not persisted in URL) ────────────
-
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const toggleSelected = (id: string) =>
     setSelectedIds((prev) => {
@@ -477,8 +472,6 @@ const AreaComposer = () => {
     });
   const selectAll = (ids: string[]) => setSelectedIds(new Set(ids));
   const deselectAll = () => setSelectedIds(new Set());
-
-  // ── Filter listings ───────────────────────────────────────────────────────
 
   const filtered = listings.filter((listing) => {
     if (activeTypes.size > 0 && !activeTypes.has(listing.type as ListingType)) return false;
@@ -492,13 +485,11 @@ const AreaComposer = () => {
     return true;
   });
 
-  // ── Coverage summary ──────────────────────────────────────────────────────
-
   // Total area that selected listings can cover, using all their available units.
   // Each listing contributes: quantity × face.u × face.v  (mm²), converted to m².
   const selectedListings = filtered.filter((l) => selectedIds.has(l._id));
   const totalCoveredArea = selectedListings.reduce((sum, l) => {
-    const face = computeFace(l.geometry as Record<string, number>, l.type as ListingType, direction);
+    const face = computeFace(l.geometry as Record<string, number>, l.type as ListingType);
     if (!face) return sum;
     return sum + (l.quantity * face.u * face.v) / 1e6;
   }, 0);
@@ -519,8 +510,7 @@ const AreaComposer = () => {
         quantity: l.quantity,
         geometry: l.geometry as Record<string, number>
       })),
-      area,
-      direction
+      area
     );
     const text = JSON.stringify(json, null, 2);
 
@@ -572,26 +562,6 @@ const AreaComposer = () => {
                 className="w-20 text-sm border border-gray-300 px-2 py-1 bg-white focus:outline-none focus:border-gray-600 tabular-nums"
               />
               <span className="text-sm text-gray-500">m²</span>
-            </div>
-
-            {/* Direction toggle */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm text-gray-500">{t('direction')}</span>
-              <div className="flex">
-                {(['horizontal', 'vertical'] as const).map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => setDirection(d)}
-                    className={`px-2.5 py-1 text-sm border transition-colors first:border-r-0 ${
-                      direction === d
-                        ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
-                    }`}
-                  >
-                    {t(d)}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Divider */}
@@ -676,7 +646,6 @@ const AreaComposer = () => {
                 <CoverageCard
                   key={listing._id}
                   listing={listing}
-                  direction={direction}
                   area={area}
                   selected={selectedIds.has(listing._id)}
                   onToggle={() => toggleSelected(listing._id)}
