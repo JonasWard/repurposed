@@ -1,0 +1,9 @@
+<svg
+    width="300"
+    height="300"
+    viewBox="0 0 300 300"
+    xmlns="http://www.w3.org/2000/svg"
+    fill-rule="evenodd"
+>
+  <path d="M60,50H240V250H60ZM80,80H120V120H80ZM130,80H170V120H130ZM180,80H220V120H180ZM80,135H120V175H80ZM130,135H170V175H130ZM180,135H220V175H180ZM80,190H120V230H80ZM180,190H220V230H180ZM130,190H170V250H130Z" fill="currentColor" stroke="currentColor" stroke-width="3" />
+</svg>

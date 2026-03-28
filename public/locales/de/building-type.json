@@ -1,0 +1,6 @@
+{
+  "residential": "Wohngebäude",
+  "commercial": "Gewerbegebäude",
+  "industrial": "Industriegebäude",
+  "mixed-use": "Gemischte Nutzung"
+}

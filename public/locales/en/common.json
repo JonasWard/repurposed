@@ -1,0 +1,22 @@
+{
+  "back-to-home": "Back to Start Page",
+  "error-with-status": "A {{statusCode}} error occurred on server",
+  "error-without-status": "An error occurred on the server",
+  "h1": "Repurposed Construction Starts Here",
+  "title": "Repurposed Marketplace",
+  "to-element-swiping": "Element Swiping",
+  "this-is-an-element": "This is an element",
+  "to-all-elements": "All elements",
+  "favorites": "Favorites",
+  "to-favorites": "To favorites",
+  "no-favorites": "No favorites",
+  "your-favorites": "Your favorited elements",
+  "name": "Name",
+  "description": "A piece of harmony for your home. Gentle waves flow across its surface. Whether in the living room, bedroom, or as a stylish highlight in the office - this lamp creates an atmosphere of calm, balance, and timeless elegance.",
+  "dislike": "Dislike",
+  "buy": "Purchase",
+  "detail-level": "Detail Level",
+  "minimal": "Minimal",
+  "content": "Detail",
+  "placeholder": "Example Data"
+}

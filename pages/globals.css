@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+
+
+:root {
+  --color-repurposed: #rgb(0, 109, 139)
+  --color-repurposed-light: #b792f7;
+  --color-background: color-mix(in oklab, var(--color-repurposed-light) 0%, white 100%);
+  --default-max-width: 1200px;
+  --standard-page-max-width: calc(min(100vw, var(--default-max-width)));
+  --card_grid_left_right_padding: 1rem;
+  --card_grid-max-width: min(100vw, calc(var(--default-max-width) + var(--card_grid_left_right_padding) * 2));
+  --card_grid-max-width-with-gap: min(100vw, calc(var(--default-max-width) + var(--card_grid_left_right_padding) * 2 + var(--element-card-cell-horizontalgap) * 2));
+  /** 
+    helper variable: if the viewport width is more than the var(--default-max-width), add a padding of the delta of the viewport width and the var(--card_grid-max-width)
+    maximum value is var(--card_grid_left_right_padding)
+  */
+  --card_grid_other_content_padding-lr: min(max(calc((var(--card_grid-max-width) - var(--standard-page-max-width))) * 0.5, 0px), var(--card_grid_left_right_padding));
+  --card_grid_padding-lr: min(max(calc((var(--card_grid-max-width-with-gap) - var(--standard-page-max-width))) * 0.5, var(--element-card-cell-horizontalgap)), calc(var(--card_grid_left_right_padding)));
+  --element-card-cell-widthmin: 180px;
+  --element-card-cell-horizontalgap: .5rem;
+}
+
+@theme {
+  --color-repurposed: var(--color-repurposed);
+  --color-repurposed-light: var(--color-repurposed-light);
+  --color-background: var(--color-background);
+}
+
+.max-w-standard-div {
+  max-width: var(--card_grid-max-width);
+  margin: 0 auto;}
+
+.standard-padding {
+  padding: 0 var(--card_grid_other_content_padding-lr);
+}
+
+.card-grid-padding {
+  padding: 0 var(--card_grid_padding-lr);
+}
+
+.element-card-grid {
+  display: grid;
+  gap: 16px var(--element-card-cell-horizontalgap);
+  margin-bottom: 2rem;
+}
+
+.element-card-grid.minimal {
+  grid-template-columns: repeat(auto-fill, minmax(var(--element-card-cell-widthmin), 1fr));
+}
+
+.element-card-grid.content {
+  grid-template-columns: 1fr;
+}
+
+.element-card {
+  border: 1px solid rgb(115, 110, 110);
+  /** make the card slightly bigger on hover */
+  transform: scale(1.0);
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.26);
+  transition: 0.2s ease-in-out;
+  filter: saturate(70%);
+}
+
+.element-card:hover {
+  /* box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.46); */
+  filter: saturate(110%);
+}
+
+.element-card.minimal:hover {
+  transform: scale(1.01);
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.26);
+  transition: 0.2s ease-in-out;
+  filter: saturate(110%);
+}
+
+
+#__next {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 100svh;
+  overflow: none;
+}
+
+h1,
+h2 {
+  font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+  font-size: 3rem;
+  margin: 5rem 0;
+  color: var(--color-repurposed);
+}
+
+h2 {
+  min-width: 18rem;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.15rem;
+}
+
+p {
+  line-height: 1.65em;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+footer {
+  background-color: rgba(var(--color-repurposed-light));
+  padding: 3rem 0;
+}

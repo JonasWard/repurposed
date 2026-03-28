@@ -1,0 +1,22 @@
+{
+  "back-to-home": "Torna alla pagina iniziale",
+  "error-with-status": "Si è verificato un errore {{statusCode}} sul server",
+  "error-without-status": "Si è verificato un errore sul server",
+  "h1": "La costruzione riutilizzata inizia qui",
+  "title": "Marketplace del riutilizzo",
+  "to-element-swiping": "Selezione elementi",
+  "to-all-elements": "Tutti gli elementi",
+  "this-is-an-element": "Questo è un elemento",
+  "favorites": "Preferiti",
+  "to-favorites": "Ai preferiti",
+  "your-favorites": "I tuoi elementi preferiti",
+  "no-favorites": "Nessun preferito",
+  "name": "Nome",
+  "description": "Un pezzo di armonia per la tua casa. Onde delicate scorrono sulla sua superficie. Che sia in salotto, camera da letto o come elegante punto di forza in ufficio - questo elemento crea un'atmosfera di calma, equilibrio ed eleganza senza tempo.",
+  "dislike": "Non mi piace",
+  "buy": "Acquista",
+  "detail-level": "Livello di dettaglio",
+  "minimal": "Minimale",
+  "content": "Dettagliato",
+  "placeholder": "Dati di esempio"
+}

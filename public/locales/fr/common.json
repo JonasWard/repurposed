@@ -1,0 +1,22 @@
+{
+  "back-to-home": "Retour à la page d'accueil",
+  "error-with-status": "Une erreur {{statusCode}} s'est produite sur le serveur",
+  "error-without-status": "Une erreur s'est produite sur le serveur",
+  "h1": "La construction réemployée commence ici",
+  "title": "Marketplace du réemploi",
+  "to-element-swiping": "Sélection d'éléments",
+  "this-is-an-element": "Ceci est un élément",
+  "to-all-elements": "Tous les éléments",
+  "favorites": "Favoris",
+  "to-favorites": "Vers les favoris",
+  "no-favorites": "Aucun favori",
+  "your-favorites": "Vos éléments favoris",
+  "name": "Nom",
+  "description": "Une pièce d'harmonie pour votre maison. Des vagues douces coulent sur sa surface. Que ce soit dans le salon, la chambre, ou comme point fort élégant au bureau - cet élément crée une atmosphère de calme, d'équilibre et d'élégance intemporelle.",
+  "dislike": "Ne pas aimer",
+  "buy": "Acheter",
+  "detail-level": "Niveau de détail",
+  "minimal": "Minimal",
+  "content": "Détaillé",
+  "placeholder": "Données d'exemple"
+}

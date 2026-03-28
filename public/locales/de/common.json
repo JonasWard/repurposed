@@ -1,0 +1,22 @@
+{
+  "back-to-home": "Zurück zur Startseite",
+  "error-with-status": "Ein {{statusCode}} Fehler ist auf dem Server aufgetreten",
+  "error-without-status": "Ein Fehler ist auf dem Server aufgetreten",
+  "h1": "Repurposed Bauen Startet Hier",
+  "title": "Repurposed Marktplatz",
+  "to-element-swiping": "Elementauswahl",
+  "this-is-an-element": "Dies ist ein Element",
+  "to-all-elements": "Alle Elemente",
+  "favorites": "Favoriten",
+  "to-favorites": "Zu Favoriten",
+  "no-favorites": "Keine Favoriten",
+  "your-favorites": "Ihre favorisierten Elemente",
+  "name": "Name",
+  "description": "Ein Stück Harmonie für Ihr Zuhause. Sanfte Wellen fließen über seine Oberfläche. Ob im Wohnzimmer, Schlafzimmer oder als stilvoller Akzent im Büro - dieses Element schafft eine Atmosphäre der Ruhe, des Gleichgewichts und zeitloser Eleganz.",
+  "dislike": "Nicht mögen",
+  "buy": "Kaufen",
+  "detail-level": "Detailstufe",
+  "minimal": "Kompakt",
+  "content": "Detailliert",
+  "placeholder": "Beispieldaten"
+}

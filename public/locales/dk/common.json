@@ -1,0 +1,22 @@
+{
+  "back-to-home": "Tilbage til startsiden",
+  "error-with-status": "En {{statusCode}} fejl opstod på serveren",
+  "error-without-status": "Der opstod en fejl på serveren",
+  "h1": "Genanvendt byggeri starter her",
+  "title": "Marked for genbrugsmaterialer",
+  "to-element-swiping": "Til elementvalg",
+  "this-is-an-element": "Dette er et element",
+  "to-all-elements": "Alle elementer",
+  "favorites": "Favoritter",
+  "to-favorites": "Til favoritter",
+  "no-favorites": "Ingen favoritter",
+  "your-favorites": "Dine favoritmarkerede elementer",
+  "name": "Navn",
+  "description": "Et stykke harmoni til dit hjem. Bløde bølger flyder over dens overflade. Uanset om det er i stuen, soveværelset eller som et stilfuldt highlight på kontoret - dette element skaber en atmosfære af ro, balance og tidløs elegance.",
+  "dislike": "Synes ikke om",
+  "buy": "Køb",
+  "detail-level": "Detailniveau",
+  "minimal": "Kompakt",
+  "content": "Detailliert",
+  "placeholder": "Eksempeldata"
+}
