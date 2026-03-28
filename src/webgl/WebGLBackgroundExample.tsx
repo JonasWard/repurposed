@@ -85,6 +85,20 @@ const WebGLBackgroundExample: React.FC = () => {
           <p>Adding more content changes the canvas size.</p>
         </div>
       </WebGLBackground>
+      <WebGLBackground
+        sdfFunction={sdfLibrary.conegridSdf}
+        colorFunction={colorLibrary.normalAngleHue}
+        preprocessorFunction={preprocessorLibrary.tilingProcessor}
+        costumScale={4}
+      >
+        <div className="p-8 text-white [text-shadow:0_0_5px_rgba(0,0,0,0.5)] min-h-[100svh]">
+          <h1>WebGL Background Example</h1>
+          <p>This content determines the size of the component.</p>
+          <p>The WebGL canvas adapts to fit this content.</p>
+          <div className="h-[200px]"></div>
+          <p>Adding more content changes the canvas size.</p>
+        </div>
+      </WebGLBackground>
     </div>
   );
 };

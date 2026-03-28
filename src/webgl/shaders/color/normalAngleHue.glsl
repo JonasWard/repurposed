@@ -24,7 +24,7 @@ vec3 getColor(float d) {
   vec2 normal = getNormal(p);
   
   // Convert normal angle to hue (0.0 to 1.0)
-  float angle = atan(normal.y, normal.x);
+  float angle = atan(normal.y, normal.x) + u_time * .5;
   float hue = (angle + 3.14159) / (2.0 * 3.14159); // Normalize to 0-1
   
   // Adjust saturation based on distance - decrease with larger distance

@@ -13,6 +13,7 @@ import polylineSdf from './sdf/polylineSdf.glsl' with {type: "text"};
 import quadGridSdf from './sdf/quadGridSdf.glsl' with {type: "text"};
 import hexGridSdf from './sdf/hexGridSdf.glsl' with {type: "text"};
 import triangleGridSdf from './sdf/triangleGridSdf.glsl' with {type: "text"};
+import conegridSdf from './sdf/conegridSdf.glsl' with {type: "text"};
 
 export const sdfLibrary = {
   defaultSdf,
@@ -29,5 +30,6 @@ export const sdfLibrary = {
   polylineSdf,
   quadGridSdf,
   hexGridSdf,
-  triangleGridSdf
+  triangleGridSdf,
+  conegridSdf
 };
