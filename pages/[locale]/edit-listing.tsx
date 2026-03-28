@@ -15,74 +15,11 @@ import {
   TYPE_ICONS,
   CommonFields,
   buildListingPayload,
+  listingToForm,
 } from '@/components/listing-form/Shared';
 
 import home from '/assets/icons/home.svg';
 import cart from '/assets/icons/shopping_cart.svg';
-
-// ── Initialise form state from an existing listing ────────────────────────────
-
-function listingToForm(listing: NonNullable<ReturnType<typeof useQuery<typeof api.listings.getById>>>): FormData {
-  const base: FormData = {
-    ...defaultForm,
-    name: listing.name,
-    imageStorageId: (listing.imageStorageId as Id<'_storage'> | undefined) ?? null,
-    // listing.imageUrl is already resolved (storage or external) by resolveImage on the server
-    existingImageUrl: listing.imageUrl ?? null,
-    quantity: listing.quantity,
-    availableFrom: listing.availableFrom
-      ? new Date(listing.availableFrom).toISOString().split('T')[0]
-      : defaultForm.availableFrom,
-    damage: listing.damage,
-    hasLocation: !!listing.location,
-    lat: listing.location?.lat.toString() ?? '',
-    lng: listing.location?.lng.toString() ?? '',
-    city: listing.location?.city ?? '',
-    zipCode: listing.location?.zipCode ?? '',
-    country: listing.location?.country ?? '',
-    address: listing.location?.address ?? '',
-  };
-
-  switch (listing.type) {
-    case 'bricks':
-      return {
-        ...base,
-        b_width: listing.geometry.width,
-        b_height: listing.geometry.height,
-        b_length: listing.geometry.length,
-        usedOutside: listing.usedOutside,
-        glazed: listing.glazed,
-        brickColour: listing.colour,
-      };
-    case 'wood':
-      return {
-        ...base,
-        w_width: listing.geometry.width,
-        w_height: listing.geometry.height,
-        w_length: listing.geometry.length,
-        structural: listing.use.structural,
-        outsideUse: listing.use.outsideUse,
-        woodType: listing.woodType,
-      };
-    case 'window':
-      return {
-        ...base,
-        win_width: listing.geometry.width,
-        frameThickness: listing.geometry.frameThickness,
-        windowType: listing.windowType,
-        winWoodType: listing.woodType,
-      };
-    case 'tile':
-      return {
-        ...base,
-        t_width: listing.geometry.width,
-        t_length: listing.geometry.length,
-        thickness: listing.geometry.thickness,
-        tileType: listing.tileType,
-        tileColour: listing.colour,
-      };
-  }
-}
 
 // ── Success screen ────────────────────────────────────────────────────────────
 

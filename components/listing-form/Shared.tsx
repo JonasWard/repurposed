@@ -3,7 +3,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { SVGIcon } from '@/components/SVGIcon';
-import { ListingTypes } from '@/lib/elements';
+import { ListingData, ListingTypes } from '@/lib/elements';
 
 import bricksIcon from '/assets/icons/element-typology/bricks.svg';
 import woodIcon from '/assets/icons/element-typology/wood.svg';
@@ -612,6 +612,69 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         geometry: { width: form.t_width, length: form.t_length, thickness: form.thickness },
         tileType: form.tileType,
         colour: form.tileColour,
+      };
+  }
+}
+
+// ── Listing → FormData (for edit and table views) ─────────────────────────────
+
+export function listingToForm(listing: ListingData): FormData {
+  const base: FormData = {
+    ...defaultForm,
+    name: listing.name,
+    imageStorageId: (listing.imageStorageId as Id<'_storage'> | undefined) ?? null,
+    existingImageUrl: listing.imageUrl ?? null,
+    quantity: listing.quantity,
+    availableFrom: listing.availableFrom
+      ? new Date(listing.availableFrom).toISOString().split('T')[0]
+      : defaultForm.availableFrom,
+    damage: listing.damage,
+    hasLocation: !!listing.location,
+    lat: listing.location?.lat.toString() ?? '',
+    lng: listing.location?.lng.toString() ?? '',
+    city: listing.location?.city ?? '',
+    zipCode: listing.location?.zipCode ?? '',
+    country: listing.location?.country ?? '',
+    address: listing.location?.address ?? '',
+  };
+
+  switch (listing.type) {
+    case 'bricks':
+      return {
+        ...base,
+        b_width: listing.geometry.width,
+        b_height: listing.geometry.height,
+        b_length: listing.geometry.length,
+        usedOutside: listing.usedOutside,
+        glazed: listing.glazed,
+        brickColour: listing.colour,
+      };
+    case 'wood':
+      return {
+        ...base,
+        w_width: listing.geometry.width,
+        w_height: listing.geometry.height,
+        w_length: listing.geometry.length,
+        structural: listing.use.structural,
+        outsideUse: listing.use.outsideUse,
+        woodType: listing.woodType,
+      };
+    case 'window':
+      return {
+        ...base,
+        win_width: listing.geometry.width,
+        frameThickness: listing.geometry.frameThickness,
+        windowType: listing.windowType,
+        winWoodType: listing.woodType,
+      };
+    case 'tile':
+      return {
+        ...base,
+        t_width: listing.geometry.width,
+        t_length: listing.geometry.length,
+        thickness: listing.geometry.thickness,
+        tileType: listing.tileType,
+        tileColour: listing.colour,
       };
   }
 }

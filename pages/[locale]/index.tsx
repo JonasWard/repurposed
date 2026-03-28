@@ -28,6 +28,9 @@ const Homepage = () => {
         <Button className="px-4" href={'/favorites'}>
           {t('to-favorites')}
         </Button>
+        <Button className="px-4" href={'/listings-table'}>
+          {t('listings-table')}
+        </Button>
       </div>
       <Footer />
     </div>

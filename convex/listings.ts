@@ -137,3 +137,10 @@ export const update = mutation({
     await ctx.db.replace(id, data);
   },
 });
+
+export const remove = mutation({
+  args: { id: v.id("listings") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
