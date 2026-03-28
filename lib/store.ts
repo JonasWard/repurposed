@@ -1,17 +1,20 @@
 import { create } from 'zustand';
+import { Id } from '@/convex/_generated/dataModel';
 
 export const LOCAL_STORAGE_KEY_LIKED = 'liked';
 export const LOCAL_STORAGE_KEY_DISLIKED = 'disliked';
 
+type ListingId = Id<'listings'>;
+
 type RepurposedStore = {
-  liked: Set<number>;
-  disliked: Set<number>;
-  _updateLiked: (liked: Set<number>) => void;
-  _updateDisliked: (disliked: Set<number>) => void;
-  addLiked: (liked: number) => void;
-  addDisliked: (disliked: number) => void;
-  removeLiked: (likedId: number) => void;
-  removeDisliked: (disliked: number) => void;
+  liked: Set<ListingId>;
+  disliked: Set<ListingId>;
+  _updateLiked: (liked: Set<ListingId>) => void;
+  _updateDisliked: (disliked: Set<ListingId>) => void;
+  addLiked: (liked: ListingId) => void;
+  addDisliked: (disliked: ListingId) => void;
+  removeLiked: (likedId: ListingId) => void;
+  removeDisliked: (disliked: ListingId) => void;
 };
 
 export const useRepurposedStore = create<RepurposedStore>((set, get) => ({

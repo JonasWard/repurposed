@@ -1,11 +1,11 @@
 import { useTranslation } from 'next-i18next';
 import { getStaticPaths, makeStaticProps } from '../../lib/getStatic';
 
-import { ElementMinimalCard } from '@/components/cards/ElementMinimalCard';
 import { useRepurposedStore } from '@/lib/store';
 import { Navigation } from '@/components/Navigation';
-import { ElementData, Elements } from '@/lib/elements';
 import { SVGIcon } from '@/components/SVGIcon';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 import cart from '/assets/icons/shopping_cart.svg';
 import home from '/assets/icons/home.svg';
@@ -15,13 +15,11 @@ import { useMemo } from 'react';
 const Favorites: React.FC = () => {
   const { t } = useTranslation(['common', 'footer']);
   const liked = useRepurposedStore((s) => s.liked);
+  const listings = useQuery(api.listings.list) ?? [];
 
   const elements = useMemo(
-    () =>
-      [...liked.values()]
-        .map((index) => Elements.find((element) => element.id === index))
-        .filter((element) => element) as ElementData[],
-    [liked]
+    () => listings.filter((listing) => liked.has(listing._id)),
+    [liked, listings]
   );
 
   return (

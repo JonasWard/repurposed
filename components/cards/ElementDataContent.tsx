@@ -1,4 +1,4 @@
-import { ElementData } from '@/lib/elements';
+import { ListingData } from '@/lib/elements';
 import { BuildingTypology } from './cardData/BuildingTypology';
 import { ElementTypology } from './cardData/ElementTypology';
 import { CardDetailLevel } from '@/lib/cardContent';
@@ -7,7 +7,7 @@ import { IconText } from './cardData/IconText';
 import { SVGIcon } from '../SVGIcon';
 import amount from '/assets/icons/amount.svg';
 
-export const ElementDataContent: React.FC<{ element: ElementData; detailLevel: (typeof CardDetailLevel)[number] }> = (
+export const ElementDataContent: React.FC<{ element: ListingData; detailLevel: (typeof CardDetailLevel)[number] }> = (
   props
 ) => {
   const sizeClass = props.detailLevel === 'content' ? 'h-6 text-sm' : 'h-[.875rem] text-xs';
@@ -24,11 +24,11 @@ export const ElementDataContent: React.FC<{ element: ElementData; detailLevel: (
       {props.detailLevel === 'content' ? (
         <IconText
           icon={<SVGIcon src={amount.src} className={sizeClass} />}
-          text={props.element.amount.toString()}
+          text={props.element.quantity.toString()}
           sizeClass={sizeClass}
         />
       ) : (
-        <span className={sizeClass}>{props.element.amount}</span>
+        <span className={sizeClass}>{props.element.quantity}</span>
       )}
     </div>
   );

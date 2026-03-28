@@ -1,15 +1,13 @@
 import { SVGIcon } from '@/components/SVGIcon';
-import { BuildingTypologies, ElementData } from '@/lib/elements';
-import residential from '/assets/icons/building-typology/residential.svg';
-import commercial from '/assets/icons/building-typology/commercial.svg';
-import industrial from '/assets/icons/building-typology/industrial.svg';
-import mixedUse from '/assets/icons/building-typology/mixed-use.svg';
+import { ListingCategories, ListingData } from '@/lib/elements';
+import constructionMaterials from '/assets/icons/building-typology/construction-materials.svg';
+import buildingMaterials from '/assets/icons/building-typology/building-materials.svg';
 import { useTranslation } from 'react-i18next';
 import { CardDetailLevel } from '@/lib/cardContent';
 import { IconText } from './IconText';
 
 export const BuildingTypology: React.FC<{
-  element: ElementData;
+  element: ListingData;
   detailLevel: (typeof CardDetailLevel)[number];
   sizeClass?: string;
 }> = ({ element, detailLevel, sizeClass }) => {
@@ -17,27 +15,23 @@ export const BuildingTypology: React.FC<{
 
   return detailLevel === 'content' ? (
     <IconText
-      icon={<BuildingTypologyIcon buildingTypology={element.buildingTypology} sizeClass={sizeClass} />}
-      text={t(element.buildingTypology)}
+      icon={<BuildingTypologyIcon category={element.category} sizeClass={sizeClass} />}
+      text={t(element.category)}
       sizeClass={sizeClass}
     />
   ) : (
-    <BuildingTypologyIcon buildingTypology={element.buildingTypology} sizeClass={sizeClass} />
+    <BuildingTypologyIcon category={element.category} sizeClass={sizeClass} />
   );
 };
 
-const BuildingTypologyIcon: React.FC<{ buildingTypology: (typeof BuildingTypologies)[number]; sizeClass?: string }> = ({
-  buildingTypology,
+const BuildingTypologyIcon: React.FC<{ category: (typeof ListingCategories)[number]; sizeClass?: string }> = ({
+  category,
   sizeClass
 }) => {
-  switch (buildingTypology) {
-    case 'residential':
-      return <SVGIcon src={residential.src} className={sizeClass} />;
-    case 'commercial':
-      return <SVGIcon src={commercial.src} className={sizeClass} />;
-    case 'industrial':
-      return <SVGIcon src={industrial.src} className={sizeClass} />;
-    case 'mixed-use':
-      return <SVGIcon src={mixedUse.src} className={sizeClass} />;
+  switch (category) {
+    case 'constructionMaterials':
+      return <SVGIcon src={constructionMaterials.src} className={sizeClass} />;
+    case 'buildingMaterials':
+      return <SVGIcon src={buildingMaterials.src} className={sizeClass} />;
   }
 };

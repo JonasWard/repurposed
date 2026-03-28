@@ -1,6 +1,6 @@
 {
-  "column": "Colonna",
-  "tt-slab": "Lastra TT",
-  "hollow-core-slab": "Lastra alveolare",
-  "slab-roof": "Lastra di tetto"
+  "bricks": "Mattoni",
+  "wood": "Legno",
+  "window": "Finestra",
+  "tile": "Piastrella"
 }

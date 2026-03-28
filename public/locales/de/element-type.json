@@ -1,6 +1,6 @@
 {
-  "column": "Säule",
-  "tt-slab": "TT Platte",
-  "hollow-core-slab": "Hohlkern",
-  "slab-roof": "Tagdächerplatte"
+  "bricks": "Ziegel",
+  "wood": "Holz",
+  "window": "Fenster",
+  "tile": "Fliese"
 }

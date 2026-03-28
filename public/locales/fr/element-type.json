@@ -1,6 +1,6 @@
 {
-  "column": "Colonne",
-  "tt-slab": "Dalle TT",
-  "hollow-core-slab": "Dalle alvéolaire",
-  "slab-roof": "Dalle de toiture"
+  "bricks": "Briques",
+  "wood": "Bois",
+  "window": "Fenêtre",
+  "tile": "Tuile"
 }

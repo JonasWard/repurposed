@@ -18,5 +18,7 @@
   "detail-level": "Detailniveau",
   "minimal": "Kompakt",
   "content": "Detailliert",
-  "placeholder": "Eksempeldata"
+  "placeholder": "Eksempeldata",
+  "add-listing": "Tilføj annonce",
+  "edit-listing": "Rediger annonce"
 }

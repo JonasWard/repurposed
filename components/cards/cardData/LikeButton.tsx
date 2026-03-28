@@ -3,22 +3,22 @@ import brokenHeart from '/assets/icons/heart_broken.svg';
 import heart from '/assets/icons/heart.svg';
 import { SVGIcon } from '@/components/SVGIcon';
 import { Button } from '@/components/Button';
-import { ElementData } from '@/lib/elements';
+import { ListingData } from '@/lib/elements';
 import { CardDetailLevel } from '@/lib/cardContent';
 import { useTranslation } from 'react-i18next';
 
-export const LikeButton: React.FC<{ element: ElementData; detailLevel: (typeof CardDetailLevel)[number] }> = ({
+export const LikeButton: React.FC<{ element: ListingData; detailLevel: (typeof CardDetailLevel)[number] }> = ({
   element,
   detailLevel
 }) => {
   const { t } = useTranslation('common');
 
   const likedElements = useRepurposedStore((state) => state.liked);
-  const isLiked = likedElements.has(element.id);
+  const isLiked = likedElements.has(element._id);
 
   const toggleLike = () => {
-    if (isLiked) useRepurposedStore.getState().removeLiked(element.id);
-    else useRepurposedStore.getState().addLiked(element.id);
+    if (isLiked) useRepurposedStore.getState().removeLiked(element._id);
+    else useRepurposedStore.getState().addLiked(element._id);
   };
 
   return detailLevel === 'content' ? (

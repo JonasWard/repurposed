@@ -1,13 +1,15 @@
 import { SVGIcon } from '@/components/SVGIcon';
-import { ElementData, ElementTypologies } from '@/lib/elements';
-import column from '/assets/icons/element-typology/column.svg';
-import slabRoof from '/assets/icons/element-typology/slab-roof.svg';
+import { ListingData, ListingTypes } from '@/lib/elements';
+import bricks from '/assets/icons/element-typology/bricks.svg';
+import wood from '/assets/icons/element-typology/wood.svg';
+import window from '/assets/icons/element-typology/window.svg';
+import tile from '/assets/icons/element-typology/tile.svg';
 import { useTranslation } from 'react-i18next';
 import { CardDetailLevel } from '@/lib/cardContent';
 import { IconText } from './IconText';
 
 export const ElementTypology: React.FC<{
-  element: ElementData;
+  element: ListingData;
   detailLevel: (typeof CardDetailLevel)[number];
   sizeClass?: string;
 }> = ({ element, detailLevel, sizeClass }) => {
@@ -15,25 +17,27 @@ export const ElementTypology: React.FC<{
 
   return detailLevel === 'content' ? (
     <IconText
-      icon={<ElementTypologyIcon elementTypology={element.type} sizeClass={sizeClass} />}
+      icon={<ElementTypologyIcon listingType={element.type} sizeClass={sizeClass} />}
       text={t(element.type)}
       sizeClass={sizeClass}
     />
   ) : (
-    <ElementTypologyIcon elementTypology={element.type} sizeClass={sizeClass} />
+    <ElementTypologyIcon listingType={element.type} sizeClass={sizeClass} />
   );
 };
 
-const ElementTypologyIcon: React.FC<{ elementTypology: (typeof ElementTypologies)[number]; sizeClass?: string }> = ({
-  elementTypology,
+const ElementTypologyIcon: React.FC<{ listingType: (typeof ListingTypes)[number]; sizeClass?: string }> = ({
+  listingType,
   sizeClass
 }) => {
-  switch (elementTypology) {
-    case 'column':
-      return <SVGIcon src={column.src} className={sizeClass} />;
-    case 'tt-slab':
-    case 'hollow-core-slab':
-    case 'slab-roof':
-      return <SVGIcon src={slabRoof.src} className={sizeClass} />;
+  switch (listingType) {
+    case 'bricks':
+      return <SVGIcon src={bricks.src} className={sizeClass} />;
+    case 'wood':
+      return <SVGIcon src={wood.src} className={sizeClass} />;
+    case 'window':
+      return <SVGIcon src={window.src} className={sizeClass} />;
+    case 'tile':
+      return <SVGIcon src={tile.src} className={sizeClass} />;
   }
 };

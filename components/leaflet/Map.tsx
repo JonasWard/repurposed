@@ -3,28 +3,31 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
 import 'leaflet-defaulticon-compatibility';
 
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { ElementData } from '@/lib/elements';
-import { useEffect, useRef } from 'react';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { ListingData } from '@/lib/elements';
 import * as Leaflet from 'leaflet';
 
-const getCenter = (elements: ElementData[]) =>
+type LocatedListing = ListingData & { location: NonNullable<ListingData['location']> };
+
+const getCenter = (elements: LocatedListing[]) =>
   elements.reduce(
-    (acc, element) => {
-      return [
-        acc[0] + element.location.position[0] / elements.length,
-        acc[1] + element.location.position[1] / elements.length
-      ];
-    },
+    (acc, element) => [
+      acc[0] + element.location.lat / elements.length,
+      acc[1] + element.location.lng / elements.length
+    ],
     [0, 0]
   ) as [number, number];
 
-export const Map: React.FC<{ elements: ElementData[]; className: string }> = ({ elements, className }) => {
+export const Map: React.FC<{ elements: ListingData[]; className: string }> = ({ elements, className }) => {
+  const located = elements.filter((e): e is LocatedListing => !!e.location);
+
+  if (located.length === 0) return null;
+
   return (
     <MapContainer
       className={className}
-      center={getCenter(elements)}
-      zoom={elements.length > 1 ? 9 : 11}
+      center={getCenter(located)}
+      zoom={located.length > 1 ? 9 : 11}
       scrollWheelZoom={true}
       attributionControl={false}
       zoomControl={false}
@@ -41,18 +44,8 @@ export const Map: React.FC<{ elements: ElementData[]; className: string }> = ({ 
         attribution='<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {elements.map((element) => (
-        <Marker position={element.location.position}>
-          {/* <Popup>
-            <h4>{element.name}</h4>
-            <span className="flex flex-col gap-2">
-              <p>
-                {element.location.country}, {element.location.city}, {element.location.zipCode}
-              </p>
-              <p>{element.location.address}</p>
-            </span>
-          </Popup> */}
-        </Marker>
+      {located.map((element) => (
+        <Marker key={element._id} position={[element.location.lat, element.location.lng]} />
       ))}
     </MapContainer>
   );

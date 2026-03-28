@@ -52,9 +52,9 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
           <div className={`element-card-grid card-grid-padding ${localDetailLevel}`}>
             {elements.map((element) =>
               localDetailLevel === 'minimal' ? (
-                <ElementMinimalCard key={element.id} element={element} />
+                <ElementMinimalCard key={element._id} element={element} />
               ) : (
-                <ElementContentCard key={element.id} element={element} />
+                <ElementContentCard key={element._id} element={element} />
               )
             )}
           </div>

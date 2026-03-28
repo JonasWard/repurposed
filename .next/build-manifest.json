@@ -13,25 +13,25 @@
   "rootMainFiles": [],
   "rootMainFilesTree": {},
   "pages": {
-    "/": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/index.js"
-    ],
-    "/404": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/404.js"
-    ],
     "/[locale]": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/[locale].js"
     ],
+    "/[locale]/add-listing": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/[locale]/add-listing.js"
+    ],
     "/[locale]/all-elements": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/[locale]/all-elements.js"
+    ],
+    "/[locale]/elements": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/[locale]/elements.js"
     ],
     "/_app": [
       "static/chunks/webpack.js",

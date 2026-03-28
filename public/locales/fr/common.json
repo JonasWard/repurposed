@@ -18,5 +18,7 @@
   "detail-level": "Niveau de détail",
   "minimal": "Minimal",
   "content": "Détaillé",
-  "placeholder": "Données d'exemple"
+  "placeholder": "Données d'exemple",
+  "add-listing": "Ajouter une annonce",
+  "edit-listing": "Modifier l'annonce"
 }

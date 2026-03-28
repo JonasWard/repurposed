@@ -2,8 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.js",
+  "/[locale]": "pages/[locale].js",
   "/[locale]/all-elements": "pages/[locale]/all-elements.js",
-  "/": "pages/index.js",
-  "/[locale]": "pages/[locale].js"
+  "/[locale]/add-listing": "pages/[locale]/add-listing.js",
+  "/[locale]/elements": "pages/[locale]/elements.js"
 }

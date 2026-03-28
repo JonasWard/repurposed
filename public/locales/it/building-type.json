@@ -1,6 +1,4 @@
 {
-  "residential": "Residenziale",
-  "commercial": "Commercial",
-  "industrial": "Industriale",
-  "mixed-use": "Mista-utilizzo"
+  "constructionMaterials": "Materiali da costruzione",
+  "buildingMaterials": "Materiali edilizi"
 }

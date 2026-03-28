@@ -1,13 +1,13 @@
-import { ElementData } from './elements';
+import { ListingData } from './elements';
 
 export const CardDetailLevel = ['minimal', 'content'] as const;
 
 export type ICardContentProps = {
-  element: ElementData;
+  element: ListingData;
 };
 
 export type ICardDisplayProps = {
-  elements: ElementData[];
+  elements: ListingData[];
   className?: string;
   detailLevel?: (typeof CardDetailLevel)[number];
 };

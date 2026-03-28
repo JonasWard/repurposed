@@ -1,6 +1,4 @@
 {
-  "residential": "Boligbyggeri",
-  "commercial": "Kontorbyggeri",
-  "industrial": "Industribyggeri",
-  "mixed-use": "Blandet brug"
+  "constructionMaterials": "Byggematerialer",
+  "buildingMaterials": "Bygningsmaterialer"
 }

@@ -5,7 +5,8 @@ import { Navigation } from '@/components/Navigation';
 import { useState } from 'react';
 import { TinderCard } from '@/components/TinderCard';
 import { useRepurposedStore } from '@/lib/store';
-import { Elements } from '@/lib/elements';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 import { SVGIcon } from '@/components/SVGIcon';
 import heart from '/assets/icons/heart.svg';
@@ -15,14 +16,17 @@ import home from '/assets/icons/home.svg';
 export const TinderSlides = () => {
   const { t } = useTranslation(['common']);
   const [activeIndex, setActiveIndex] = useState(0);
+  const listings = useQuery(api.listings.list) ?? [];
 
   const onLike = (index: number) => {
-    useRepurposedStore.getState().addLiked(index);
+    const listing = listings[index];
+    if (listing) useRepurposedStore.getState().addLiked(listing._id);
     setActiveIndex((prev) => prev + 1);
   };
 
   const onDislike = (index: number) => {
-    useRepurposedStore.getState().addDisliked(index);
+    const listing = listings[index];
+    if (listing) useRepurposedStore.getState().addDisliked(listing._id);
     setActiveIndex((prev) => prev + 1);
   };
 
@@ -40,22 +44,22 @@ export const TinderSlides = () => {
       <main className="bg-white-900 w-[100vw]">
         <div className="overflow-clip flex items-center justify-center touch-none w-[100vw] h-[100vh] mt-[calc(100svh-100vh)]">
           <div className="relative w-[min(85svw,600px)] h-[min(80svh,800px)]">
-            {Elements[activeIndex + 1] ? (
+            {listings[activeIndex + 1] ? (
               <TinderCard
                 active={false}
                 key={activeIndex + 1}
-                url={Elements[activeIndex + 1].src}
+                url={listings[activeIndex + 1].imageUrl ?? ''}
                 index={activeIndex + 1}
                 onLike={() => onLike(activeIndex + 1)}
                 onDislike={() => onDislike(activeIndex + 1)}
                 name={t('this-is-an-element')}
               />
             ) : null}
-            {Elements[activeIndex] ? (
+            {listings[activeIndex] ? (
               <TinderCard
                 active
                 key={activeIndex}
-                url={Elements[activeIndex].src}
+                url={listings[activeIndex].imageUrl ?? ''}
                 index={activeIndex}
                 onLike={() => onLike(activeIndex)}
                 onDislike={() => onDislike(activeIndex)}

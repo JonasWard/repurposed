@@ -16,6 +16,9 @@ const Homepage = () => {
         <Button className="px-4" href={'/all-elements'}>
           {t('to-all-elements')}
         </Button>
+        <Button className="px-4" href={'/add-listing'}>
+          {t('add-listing')}
+        </Button>
         <Button className="px-4" href={'/favorites'}>
           {t('to-favorites')}
         </Button>

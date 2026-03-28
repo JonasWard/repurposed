@@ -18,5 +18,7 @@
   "detail-level": "Detailstufe",
   "minimal": "Kompakt",
   "content": "Detailliert",
-  "placeholder": "Beispieldaten"
+  "placeholder": "Beispieldaten",
+  "add-listing": "Inserat erstellen",
+  "edit-listing": "Inserat bearbeiten"
 }
