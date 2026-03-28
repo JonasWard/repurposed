@@ -443,6 +443,15 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
         <div className="card-grid-padding flex flex-row items-center justify-between gap-4 flex-wrap pb-1">
           <DetailLevelSelector detailLevel={localDetailLevel} setDetailLevel={setLocalDetailLevel} />
           <div className="flex items-center gap-2">
+            {isAnyFilterActive ? (
+              <button
+                onClick={clearAllFilters}
+                className="px-2.5 py-1 text-sm text-gray-400 hover:text-gray-800 border border-transparent hover:border-gray-300 transition-colors"
+              >
+                {tc('clear-all-filters')}
+              </button>
+            ) : undefined}
+
             <TypeMultiSelect activeTypes={activeTypes} onToggle={toggleType} onClear={clearTypes} />
             <GeomFilterDropdown
               union={geomUnion}
@@ -460,14 +469,6 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
               onToggle={toggleColour}
               onClear={clearColours}
             />
-            {isAnyFilterActive && (
-              <button
-                onClick={clearAllFilters}
-                className="px-2.5 py-1 text-sm text-gray-400 hover:text-gray-800 border border-transparent hover:border-gray-300 transition-colors"
-              >
-                {tc('clear-all-filters')}
-              </button>
-            )}
           </div>
         </div>
         <div className="h-0">
