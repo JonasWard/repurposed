@@ -1,6 +1,0 @@
-<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg">
-  <path d="M256 32 L480 144 L480 176 L256 176 L32 176 L32 144 Z"/>
-  <rect x="64" y="192" width="80" height="288"/>
-  <rect x="216" y="192" width="80" height="288"/>
-  <rect x="368" y="192" width="80" height="288"/>
-</svg>

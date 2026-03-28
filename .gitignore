@@ -37,5 +37,4 @@ convex/_generated
 .DS_Store
 
 # .next
-.next/**
 .next
