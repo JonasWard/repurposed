@@ -48,5 +48,9 @@
   "saving": "Wird gespeichert…",
   "edit-success-title": "Inserat aktualisiert!",
   "edit-success-message": "Ihre Änderungen wurden gespeichert.",
-  "back-to-listing": "Zurück zum Inserat"
+  "back-to-listing": "Zurück zum Inserat",
+  "ai-autofill": "Automatisch ausfüllen mit KI",
+  "ai-analysing": "Bild wird analysiert…",
+  "ai-done": "Felder wurden ausgefüllt",
+  "ai-error": "Daten konnten nicht extrahiert werden — bitte manuell ausfüllen"
 }

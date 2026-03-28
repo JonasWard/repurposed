@@ -48,5 +48,9 @@
   "saving": "Gemmer…",
   "edit-success-title": "Annonce opdateret!",
   "edit-success-message": "Dine ændringer er blevet gemt.",
-  "back-to-listing": "Tilbage til annoncen"
+  "back-to-listing": "Tilbage til annoncen",
+  "ai-autofill": "Udfyld automatisk med AI",
+  "ai-analysing": "Analyserer billede…",
+  "ai-done": "Felter udfyldt",
+  "ai-error": "Kunne ikke udtrække data — udfyld venligst manuelt"
 }

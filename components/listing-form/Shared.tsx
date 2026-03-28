@@ -195,7 +195,8 @@ export const ImageUpload: React.FC<{
   onCleared: () => void;
   t: (key: string) => string;
   currentImageUrl?: string;
-}> = ({ onUploaded, onCleared, t, currentImageUrl }) => {
+  onPreviewReady?: (url: string | null) => void;
+}> = ({ onUploaded, onCleared, t, currentImageUrl, onPreviewReady }) => {
   const generateUploadUrl = useMutation(api.listings.generateUploadUrl);
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploadState, setUploadState] = useState<UploadState>(currentImageUrl ? 'done' : 'idle');
@@ -206,8 +207,10 @@ export const ImageUpload: React.FC<{
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const objectUrl = URL.createObjectURL(file);
     setFileName(file.name);
-    setPreviewUrl(URL.createObjectURL(file));
+    setPreviewUrl(objectUrl);
+    onPreviewReady?.(objectUrl);
     setUploadState('uploading');
 
     try {
@@ -215,7 +218,7 @@ export const ImageUpload: React.FC<{
       const res = await fetch(uploadUrl, {
         method: 'POST',
         headers: { 'Content-Type': file.type },
-        body: file,
+        body: file
       });
       if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
       const { storageId } = (await res.json()) as { storageId: Id<'_storage'> };
@@ -224,6 +227,7 @@ export const ImageUpload: React.FC<{
     } catch {
       setUploadState('error');
       setPreviewUrl(null);
+      onPreviewReady?.(null);
       setFileName(null);
     }
   };
@@ -233,6 +237,7 @@ export const ImageUpload: React.FC<{
     setPreviewUrl(null);
     setFileName(null);
     onCleared();
+    onPreviewReady?.(null);
     if (fileRef.current) fileRef.current.value = '';
   };
 
@@ -246,7 +251,7 @@ export const ImageUpload: React.FC<{
               <span className="text-sm font-medium text-gray-600">{t('uploading')}…</span>
             </div>
           )}
-          {(uploadState === 'done') && (
+          {uploadState === 'done' && (
             <button
               type="button"
               onClick={handleClear}
@@ -268,9 +273,7 @@ export const ImageUpload: React.FC<{
         </button>
       )}
 
-      {uploadState === 'error' && (
-        <span className="text-xs text-red-500">{t('upload-error')}</span>
-      )}
+      {uploadState === 'error' && <span className="text-xs text-red-500">{t('upload-error')}</span>}
 
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
     </div>
@@ -279,11 +282,11 @@ export const ImageUpload: React.FC<{
 
 // ── Type-specific field sections ─────────────────────────────────────────────
 
-export const BricksFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const BricksFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -308,11 +311,11 @@ export const BricksFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
   </>
 );
 
-export const WoodFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const WoodFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -337,11 +340,11 @@ export const WoodFields: React.FC<{ form: FormData; set: (patch: Partial<FormDat
   </>
 );
 
-export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const WindowFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-2 gap-3">
@@ -349,7 +352,13 @@ export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
           <NumberInput value={form.win_width} min={200} max={2000} onChange={(v) => set({ win_width: v })} />
         </Field>
         <Field label={`${t('frame-thickness')} (10–100)`}>
-          <NumberInput value={form.frameThickness} min={10} max={100} step={0.5} onChange={(v) => set({ frameThickness: v })} />
+          <NumberInput
+            value={form.frameThickness}
+            min={10}
+            max={100}
+            step={0.5}
+            onChange={(v) => set({ frameThickness: v })}
+          />
         </Field>
       </div>
     </Section>
@@ -364,11 +373,11 @@ export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
   </>
 );
 
-export const TileFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const TileFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -394,11 +403,129 @@ export const TileFields: React.FC<{ form: FormData; set: (patch: Partial<FormDat
   </>
 );
 
+// ── LM Studio AI autofill ────────────────────────────────────────────────────
+
+const LM_STUDIO_BASE_URL = process.env.NEXT_PUBLIC_LM_STUDIO_BASE_URL ?? 'http://localhost:1234';
+const LM_STUDIO_MODEL = process.env.NEXT_PUBLIC_LM_STUDIO_MODEL ?? 'qwen/qwen3-vl-8b';
+
+async function toBase64(url: string): Promise<{ base64: string; mimeType: string }> {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const [header, b64] = result.split(',');
+      resolve({ base64: b64, mimeType: header.match(/data:([^;]+)/)?.[1] ?? 'image/jpeg' });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function buildAiPrompt(type: ListingType): string {
+  const typeFields: Record<ListingType, string> = {
+    bricks: [
+      '  "usedOutside": <true if bricks show weathering or outdoor use, false otherwise>',
+      '  "glazed": <true if bricks have a glazed/shiny surface, false otherwise>',
+      '  "brickColour": <one of: "red", "yellow", "brown">'
+    ].join(',\n'),
+    wood: [
+      '  "woodType": <one of: "cedar", "oak", "pine", "douglas fir", "spruce">',
+      '  "structural": <true if the wood appears structural/load-bearing>',
+      '  "outsideUse": <true if wood appears suitable for exterior use>'
+    ].join(',\n'),
+    window: [
+      '  "windowType": <one of: "fixed", "sliding", "casement", "awning">',
+      '  "winWoodType": <one of: "cedar", "oak", "pine", "douglas fir", "spruce">'
+    ].join(',\n'),
+    tile: [
+      '  "tileType": <one of: "ceramic", "slate", "terracota">',
+      '  "tileColour": <one of: "red", "yellow", "blue", "white", "brown", "green">'
+    ].join(',\n')
+  };
+  return `You are analysing an image of a second-hand building material for a marketplace listing.
+Material type: ${type}
+Look at the image carefully and return ONLY a JSON object with these fields:
+{
+  "name": "A short descriptive title (e.g. 'Reclaimed red clay bricks – minor weathering')",
+  "damage": <integer 1-5: 1=perfect, 2=light wear, 3=moderate, 4=significant, 5=heavy>,
+${typeFields[type]}
+}
+Return ONLY valid JSON. No markdown, no explanation.`;
+}
+
+function parseAiResponse(json: Record<string, unknown>, type: ListingType): Partial<FormData> {
+  const result: Partial<FormData> = {};
+  if (typeof json.name === 'string' && json.name) result.name = json.name;
+  if (typeof json.damage === 'number') result.damage = Math.min(5, Math.max(1, Math.round(json.damage)));
+  switch (type) {
+    case 'bricks':
+      if (typeof json.usedOutside === 'boolean') result.usedOutside = json.usedOutside;
+      if (typeof json.glazed === 'boolean') result.glazed = json.glazed;
+      if (BRICK_COLOURS.includes(json.brickColour as BrickColour)) result.brickColour = json.brickColour as BrickColour;
+      break;
+    case 'wood':
+      if (WOOD_TYPES.includes(json.woodType as WoodType)) result.woodType = json.woodType as WoodType;
+      if (typeof json.structural === 'boolean') result.structural = json.structural;
+      if (typeof json.outsideUse === 'boolean') result.outsideUse = json.outsideUse;
+      break;
+    case 'window':
+      if (WINDOW_TYPES.includes(json.windowType as WindowType)) result.windowType = json.windowType as WindowType;
+      if (WOOD_TYPES.includes(json.winWoodType as WoodType)) result.winWoodType = json.winWoodType as WoodType;
+      break;
+    case 'tile':
+      if (TILE_TYPES.includes(json.tileType as TileType)) result.tileType = json.tileType as TileType;
+      if (TILE_COLOURS.includes(json.tileColour as TileColour)) result.tileColour = json.tileColour as TileColour;
+      break;
+  }
+  return result;
+}
+
+async function callLMStudio(imageUrl: string, type: ListingType): Promise<Partial<FormData>> {
+  const { base64, mimeType } = await toBase64(imageUrl);
+  // In dev: call the local Next.js proxy (pages/api/lm-studio.ts) — no CORS.
+  // In production static export this route doesn't exist, so fall back to direct.
+  const endpoint =
+    typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? '/api/lm-studio'
+      : `${LM_STUDIO_BASE_URL.replace(/\/$/, '')}/v1/chat/completions`;
+
+  const basePayload = {
+    model: LM_STUDIO_MODEL,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
+          { type: 'text', text: buildAiPrompt(type) }
+        ]
+      }
+    ],
+    temperature: 0.1
+  };
+
+  const post = (body: object) =>
+    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+  let response = await post({ ...basePayload, response_format: { type: 'json_object' } });
+  if (response.status >= 400) {
+    response = await post(basePayload);
+  }
+  if (!response.ok) throw new Error(`LM Studio responded with ${response.status}`);
+
+  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
+  const text = data.choices?.[0]?.message?.content ?? '';
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON in response');
+  return parseAiResponse(JSON.parse(jsonMatch[0]) as Record<string, unknown>, type);
+}
+
 // ── Type selector ────────────────────────────────────────────────────────────
 
 export const TypeSelector: React.FC<{ onSelect: (t: ListingType) => void; t: (k: string) => string }> = ({
   onSelect,
-  t,
+  t
 }) => (
   <div className="flex flex-col gap-6 items-center w-full mt-8">
     <h2 className="text-2xl font-bold opacity-80">{t('select-type')}</h2>
@@ -419,132 +546,171 @@ export const TypeSelector: React.FC<{ onSelect: (t: ListingType) => void; t: (k:
 
 // ── Common form body (shared between add and edit) ───────────────────────────
 
+type AiState = 'idle' | 'loading' | 'done' | 'error';
+
 export const CommonFields: React.FC<{
   form: FormData;
   set: (patch: Partial<FormData>) => void;
   t: (k: string) => string;
   selectedType: ListingType;
-}> = ({ form, set, t, selectedType }) => (
-  <div className="flex flex-col gap-6 max-w-2xl mx-auto mt-6">
-    <Section title={t('basic-info')}>
-      <Field label={t('name')}>
-        <input
-          type="text"
-          className={inputClass}
-          value={form.name}
-          placeholder="e.g. Red clay bricks – lot of 500"
-          onChange={(e) => set({ name: e.target.value })}
-        />
-      </Field>
-      <Field label={t('image')}>
-        <ImageUpload
-          onUploaded={(storageId) => set({ imageStorageId: storageId, existingImageUrl: null })}
-          onCleared={() => set({ imageStorageId: null, existingImageUrl: null })}
-          t={t}
-          currentImageUrl={form.existingImageUrl ?? undefined}
-        />
-      </Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label={`${t('quantity')} (1–1000)`}>
-          <NumberInput value={form.quantity} min={1} max={1000} onChange={(v) => set({ quantity: v })} />
-        </Field>
-        <Field label={t('available-from')}>
+}> = ({ form, set, t, selectedType }) => {
+  // Initialise from existingImageUrl so the AI button is available on edit load.
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(form.existingImageUrl ?? null);
+  const [aiState, setAiState] = useState<AiState>('idle');
+
+  const handlePreviewReady = (url: string | null) => {
+    setImagePreviewUrl(url);
+    if (!url) setAiState('idle');
+  };
+
+  const handleAiAutofill = async () => {
+    if (!imagePreviewUrl) return;
+    setAiState('loading');
+    try {
+      const patch = await callLMStudio(imagePreviewUrl, selectedType);
+      set(patch);
+      setAiState('done');
+      setTimeout(() => setAiState('idle'), 3000);
+    } catch {
+      setAiState('error');
+      setTimeout(() => setAiState('idle'), 4000);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6 max-w-2xl mx-auto mt-6">
+      <Section title={t('basic-info')}>
+        <Field label={t('name')}>
           <input
-            type="date"
+            type="text"
             className={inputClass}
-            value={form.availableFrom}
-            onChange={(e) => set({ availableFrom: e.target.value })}
+            value={form.name}
+            placeholder="e.g. Red clay bricks – lot of 500"
+            onChange={(e) => set({ name: e.target.value })}
           />
         </Field>
-      </div>
-      <Field label={`${t('damage')} (1–5)`} hint={t('damage-hint')}>
-        <div className="flex flex-row items-center gap-3">
-          <input
-            type="range"
-            min={1}
-            max={5}
-            step={1}
-            value={form.damage}
-            onChange={(e) => set({ damage: Number(e.target.value) })}
-            className="flex-1"
+        <Field label={t('image')}>
+          <ImageUpload
+            onUploaded={(storageId) => set({ imageStorageId: storageId, existingImageUrl: null })}
+            onCleared={() => set({ imageStorageId: null, existingImageUrl: null })}
+            t={t}
+            currentImageUrl={form.existingImageUrl ?? undefined}
+            onPreviewReady={handlePreviewReady}
           />
-          <span className="w-5 text-center font-bold">{form.damage}</span>
-        </div>
-      </Field>
-    </Section>
-
-    {selectedType === 'bricks' && <BricksFields form={form} set={set} t={t} />}
-    {selectedType === 'wood' && <WoodFields form={form} set={set} t={t} />}
-    {selectedType === 'window' && <WindowFields form={form} set={set} t={t} />}
-    {selectedType === 'tile' && <TileFields form={form} set={set} t={t} />}
-
-    <Section title={t('location')}>
-      <CheckboxInput
-        label={t('add-location')}
-        checked={form.hasLocation}
-        onChange={(v) => set({ hasLocation: v })}
-      />
-      {form.hasLocation && (
-        <div className="flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label={t('latitude')}>
-              <input
-                type="number"
-                className={inputClass}
-                step="any"
-                value={form.lat}
-                onChange={(e) => set({ lat: e.target.value })}
-              />
-            </Field>
-            <Field label={t('longitude')}>
-              <input
-                type="number"
-                className={inputClass}
-                step="any"
-                value={form.lng}
-                onChange={(e) => set({ lng: e.target.value })}
-              />
-            </Field>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label={t('city')}>
-              <input
-                type="text"
-                className={inputClass}
-                value={form.city}
-                onChange={(e) => set({ city: e.target.value })}
-              />
-            </Field>
-            <Field label={t('zip-code')}>
-              <input
-                type="text"
-                className={inputClass}
-                value={form.zipCode}
-                onChange={(e) => set({ zipCode: e.target.value })}
-              />
-            </Field>
-          </div>
-          <Field label={t('country')}>
-            <input
-              type="text"
-              className={inputClass}
-              value={form.country}
-              onChange={(e) => set({ country: e.target.value })}
-            />
+          {imagePreviewUrl && (
+            <div className="flex items-center gap-3 mt-1">
+              <button
+                type="button"
+                onClick={handleAiAutofill}
+                disabled={aiState === 'loading'}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span>{aiState === 'loading' ? '⏳' : '✦'}</span>
+                <span>{aiState === 'loading' ? t('ai-analysing') : t('ai-autofill')}</span>
+              </button>
+              {aiState === 'done' && <span className="text-xs text-green-600">✓ {t('ai-done')}</span>}
+              {aiState === 'error' && <span className="text-xs text-red-500">{t('ai-error')}</span>}
+            </div>
+          )}
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label={`${t('quantity')} (1–1000)`}>
+            <NumberInput value={form.quantity} min={1} max={1000} onChange={(v) => set({ quantity: v })} />
           </Field>
-          <Field label={t('address')}>
+          <Field label={t('available-from')}>
             <input
-              type="text"
+              type="date"
               className={inputClass}
-              value={form.address}
-              onChange={(e) => set({ address: e.target.value })}
+              value={form.availableFrom}
+              onChange={(e) => set({ availableFrom: e.target.value })}
             />
           </Field>
         </div>
-      )}
-    </Section>
-  </div>
-);
+        <Field label={`${t('damage')} (1–5)`} hint={t('damage-hint')}>
+          <div className="flex flex-row items-center gap-3">
+            <input
+              type="range"
+              min={1}
+              max={5}
+              step={1}
+              value={form.damage}
+              onChange={(e) => set({ damage: Number(e.target.value) })}
+              className="flex-1"
+            />
+            <span className="w-5 text-center font-bold">{form.damage}</span>
+          </div>
+        </Field>
+      </Section>
+
+      {selectedType === 'bricks' && <BricksFields form={form} set={set} t={t} />}
+      {selectedType === 'wood' && <WoodFields form={form} set={set} t={t} />}
+      {selectedType === 'window' && <WindowFields form={form} set={set} t={t} />}
+      {selectedType === 'tile' && <TileFields form={form} set={set} t={t} />}
+
+      <Section title={t('location')}>
+        <CheckboxInput label={t('add-location')} checked={form.hasLocation} onChange={(v) => set({ hasLocation: v })} />
+        {form.hasLocation && (
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label={t('latitude')}>
+                <input
+                  type="number"
+                  className={inputClass}
+                  step="any"
+                  value={form.lat}
+                  onChange={(e) => set({ lat: e.target.value })}
+                />
+              </Field>
+              <Field label={t('longitude')}>
+                <input
+                  type="number"
+                  className={inputClass}
+                  step="any"
+                  value={form.lng}
+                  onChange={(e) => set({ lng: e.target.value })}
+                />
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label={t('city')}>
+                <input
+                  type="text"
+                  className={inputClass}
+                  value={form.city}
+                  onChange={(e) => set({ city: e.target.value })}
+                />
+              </Field>
+              <Field label={t('zip-code')}>
+                <input
+                  type="text"
+                  className={inputClass}
+                  value={form.zipCode}
+                  onChange={(e) => set({ zipCode: e.target.value })}
+                />
+              </Field>
+            </div>
+            <Field label={t('country')}>
+              <input
+                type="text"
+                className={inputClass}
+                value={form.country}
+                onChange={(e) => set({ country: e.target.value })}
+              />
+            </Field>
+            <Field label={t('address')}>
+              <input
+                type="text"
+                className={inputClass}
+                value={form.address}
+                onChange={(e) => set({ address: e.target.value })}
+              />
+            </Field>
+          </div>
+        )}
+      </Section>
+    </div>
+  );
+};
 
 // ── Build listing payload from form state ─────────────────────────────────────
 

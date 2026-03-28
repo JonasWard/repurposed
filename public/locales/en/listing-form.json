@@ -48,5 +48,9 @@
   "saving": "Saving…",
   "edit-success-title": "Listing updated!",
   "edit-success-message": "Your changes have been saved.",
-  "back-to-listing": "Back to listing"
+  "back-to-listing": "Back to listing",
+  "ai-autofill": "Auto-fill with AI",
+  "ai-analysing": "Analysing image…",
+  "ai-done": "Fields filled in",
+  "ai-error": "Could not extract data — please fill in manually"
 }

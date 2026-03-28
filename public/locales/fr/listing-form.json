@@ -48,5 +48,9 @@
   "saving": "Enregistrement…",
   "edit-success-title": "Annonce mise à jour!",
   "edit-success-message": "Vos modifications ont été enregistrées.",
-  "back-to-listing": "Retour à l'annonce"
+  "back-to-listing": "Retour à l'annonce",
+  "ai-autofill": "Remplir automatiquement avec l'IA",
+  "ai-analysing": "Analyse de l'image…",
+  "ai-done": "Champs remplis",
+  "ai-error": "Impossible d'extraire les données — veuillez remplir manuellement"
 }

@@ -48,5 +48,9 @@
   "saving": "Salvataggio…",
   "edit-success-title": "Annuncio aggiornato!",
   "edit-success-message": "Le tue modifiche sono state salvate.",
-  "back-to-listing": "Torna all'annuncio"
+  "back-to-listing": "Torna all'annuncio",
+  "ai-autofill": "Compilazione automatica con AI",
+  "ai-analysing": "Analisi immagine…",
+  "ai-done": "Campi compilati",
+  "ai-error": "Impossibile estrarre i dati — compilare manualmente"
 }
