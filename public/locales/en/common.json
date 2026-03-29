@@ -36,5 +36,8 @@
   "colour-blue": "Blue",
   "colour-white": "White",
   "colour-green": "Green",
-  "listings-table": "Listings Table"
+  "listings-table": "Listings Table",
+  "nav-standard": "Standard",
+  "nav-tools": "Tools",
+  "nav-admin": "Admin"
 }

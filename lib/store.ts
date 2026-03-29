@@ -20,6 +20,9 @@ type RepurposedStore = {
   // ── Viewer ──────────────────────────────────────────────────────────────────
   viewerMode: ViewerMode;
   setViewerMode: (mode: ViewerMode) => void;
+  // ── Map focus ────────────────────────────────────────────────────────────────
+  focusedListingId: string | null;
+  setFocusedListingId: (id: string | null) => void;
 };
 
 export const useRepurposedStore = create<RepurposedStore>((set, get) => ({
@@ -27,6 +30,8 @@ export const useRepurposedStore = create<RepurposedStore>((set, get) => ({
   disliked: new Set(),
   viewerMode: 'geometry',
   setViewerMode: (mode) => set({ viewerMode: mode }),
+  focusedListingId: null,
+  setFocusedListingId: (id) => set({ focusedListingId: id }),
   _updateLiked: (liked) => {
     set(() => ({ liked }));
     localStorage.setItem(LOCAL_STORAGE_KEY_LIKED, JSON.stringify([...liked.values()]));

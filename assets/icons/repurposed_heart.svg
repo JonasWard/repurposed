@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="120 400 225 250"><defs><style>.cls-1{opacity:0.62;}.cls-2,.cls-4,.cls-7,.cls-9{fill:none;}.cls-2,.cls-6,.cls-8,.cls-9{stroke:#fff;}.cls-2,.cls-3,.cls-4,.cls-6,.cls-7,.cls-8,.cls-9{stroke-miterlimit:10;}.cls-2,.cls-7{stroke-width:2px;}.cls-3{fill:#1d1d1b;}.cls-3,.cls-4,.cls-7{stroke:#1d1d1b;}.cls-5,.cls-6{fill:#ffcc03;}.cls-6,.cls-8,.cls-9{stroke-width:5px;}.cls-8{fill:#fff;}</style></defs>
+  <g id="gold" class="cls-1">
+    <line class="cls-2" x1="337.9" y1="592.76" x2="231.01" y2="646.55"/>
+  <line class="cls-2" x1="128.32" y1="594.9" x2="232.07" y2="646.61"/></g>
+  <g id="Layer_2" data-name="Layer 2">
+  </g>
+    
+      <g id="Layer_9" data-name="Layer 9">
+        <polygon class="cls-5" points="338.32 440.3 232.35 428.62 128.32 440.3 128.32 594.9 231.01 646.55 338.24 592.76 338.32 440.3"/>
+        <path class="cls-6" d="M335.12,444.66a19.22,19.22,0,0,0,3.2-10.41c0-16.84-23.93-30.48-53.45-30.48-25.26,0-48.77,13.37-52.52,24.85"/>
+        <path class="cls-6" d="M132.12,444.66A19.65,19.65,0,0,1,129,434.25c0-16.84,23.34-30.48,52.13-30.48,24.64,0,47.57,13.37,51.22,24.85"/>
+        <line class="cls-8" x1="335.12" y1="444.66" x2="230.69" y2="498.09"/>
+        <line class="cls-8" x1="132.12" y1="444.66" x2="230.69" y2="498.09"/>
+        <line class="cls-8" x1="230.69" y1="498.09" x2="230.69" y2="650.43"/>
+  </g></svg>

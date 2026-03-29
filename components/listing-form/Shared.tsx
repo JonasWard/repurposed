@@ -9,6 +9,7 @@ import bricksIcon from '/assets/icons/element-typology/bricks.svg';
 import woodIcon from '/assets/icons/element-typology/wood.svg';
 import windowIcon from '/assets/icons/element-typology/window.svg';
 import tileIcon from '/assets/icons/element-typology/tile.svg';
+import doorIcon from '/assets/icons/element-typology/door.svg';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,18 +19,23 @@ export type BrickColour = 'red' | 'yellow' | 'brown';
 export type TileColour = 'red' | 'yellow' | 'blue' | 'white' | 'brown' | 'green';
 export type TileType = 'ceramic' | 'slate' | 'terracota';
 export type WindowType = 'fixed' | 'sliding' | 'casement' | 'awning';
+export type DoorType = 'interior' | 'exterior' | 'sliding' | 'french';
+export type DoorMaterial = 'wood' | 'steel' | 'aluminum' | 'upvc';
 
 export const WOOD_TYPES: WoodType[] = ['cedar', 'oak', 'pine', 'douglas fir', 'spruce'];
 export const WINDOW_TYPES: WindowType[] = ['fixed', 'sliding', 'casement', 'awning'];
 export const TILE_TYPES: TileType[] = ['ceramic', 'slate', 'terracota'];
 export const BRICK_COLOURS: BrickColour[] = ['red', 'yellow', 'brown'];
 export const TILE_COLOURS: TileColour[] = ['red', 'yellow', 'blue', 'white', 'brown', 'green'];
+export const DOOR_TYPES: DoorType[] = ['interior', 'exterior', 'sliding', 'french'];
+export const DOOR_MATERIALS: DoorMaterial[] = ['wood', 'steel', 'aluminum', 'upvc'];
 
 export const TYPE_ICONS: Record<ListingType, string> = {
   bricks: bricksIcon.src,
   wood: woodIcon.src,
   window: windowIcon.src,
   tile: tileIcon.src,
+  door: doorIcon.src
 };
 
 // ── Form state ───────────────────────────────────────────────────────────────
@@ -73,6 +79,13 @@ export type FormData = {
   thickness: number;
   tileType: TileType;
   tileColour: TileColour;
+  // door
+  d_width: number;
+  d_height: number;
+  d_frameThickness: number;
+  doorType: DoorType;
+  doorMaterial: DoorMaterial;
+  doorGlazed: boolean;
 };
 
 export const defaultForm: FormData = {
@@ -110,6 +123,12 @@ export const defaultForm: FormData = {
   thickness: 20,
   tileType: 'ceramic',
   tileColour: 'white',
+  d_width: 900,
+  d_height: 2100,
+  d_frameThickness: 50,
+  doorType: 'interior',
+  doorMaterial: 'wood',
+  doorGlazed: false
 };
 
 // ── Shared field components ──────────────────────────────────────────────────
@@ -121,7 +140,7 @@ export const selectClass = inputClass;
 export const Field: React.FC<{ label: string; hint?: string; children: React.ReactNode }> = ({
   label,
   hint,
-  children,
+  children
 }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</label>
@@ -181,7 +200,7 @@ export const NumberInput: React.FC<{
 export function SelectInput<T extends string>({
   value,
   options,
-  onChange,
+  onChange
 }: {
   value: T;
   options: T[];
@@ -201,7 +220,7 @@ export function SelectInput<T extends string>({
 export const CheckboxInput: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({
   label,
   checked,
-  onChange,
+  onChange
 }) => (
   <label className="flex flex-row items-center gap-2 cursor-pointer text-sm">
     <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4" />
@@ -238,7 +257,7 @@ export const ImageUpload: React.FC<{
       const res = await fetch(uploadUrl, {
         method: 'POST',
         headers: { 'Content-Type': file.type },
-        body: file,
+        body: file
       });
       if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
       const { storageId } = (await res.json()) as { storageId: Id<'_storage'> };
@@ -269,7 +288,7 @@ export const ImageUpload: React.FC<{
               <span className="text-sm font-medium text-gray-600">{t('uploading')}…</span>
             </div>
           )}
-          {(uploadState === 'done') && (
+          {uploadState === 'done' && (
             <button
               type="button"
               onClick={handleClear}
@@ -291,9 +310,7 @@ export const ImageUpload: React.FC<{
         </button>
       )}
 
-      {uploadState === 'error' && (
-        <span className="text-xs text-red-500">{t('upload-error')}</span>
-      )}
+      {uploadState === 'error' && <span className="text-xs text-red-500">{t('upload-error')}</span>}
 
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
     </div>
@@ -302,11 +319,11 @@ export const ImageUpload: React.FC<{
 
 // ── Type-specific field sections ─────────────────────────────────────────────
 
-export const BricksFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const BricksFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -331,11 +348,11 @@ export const BricksFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
   </>
 );
 
-export const WoodFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const WoodFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -360,11 +377,11 @@ export const WoodFields: React.FC<{ form: FormData; set: (patch: Partial<FormDat
   </>
 );
 
-export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const WindowFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-2 gap-3">
@@ -372,7 +389,13 @@ export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
           <NumberInput value={form.win_width} min={200} max={2000} onChange={(v) => set({ win_width: v })} />
         </Field>
         <Field label={`${t('frame-thickness')} (10–100)`}>
-          <NumberInput value={form.frameThickness} min={10} max={100} step={0.5} onChange={(v) => set({ frameThickness: v })} />
+          <NumberInput
+            value={form.frameThickness}
+            min={10}
+            max={100}
+            step={0.5}
+            onChange={(v) => set({ frameThickness: v })}
+          />
         </Field>
       </div>
     </Section>
@@ -387,11 +410,11 @@ export const WindowFields: React.FC<{ form: FormData; set: (patch: Partial<FormD
   </>
 );
 
-export const TileFields: React.FC<{ form: FormData; set: (patch: Partial<FormData>) => void; t: (k: string) => string }> = ({
-  form,
-  set,
-  t,
-}) => (
+export const TileFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
   <>
     <Section title={t('geometry')}>
       <div className="grid grid-cols-3 gap-3">
@@ -417,11 +440,176 @@ export const TileFields: React.FC<{ form: FormData; set: (patch: Partial<FormDat
   </>
 );
 
+export const DoorFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
+  <>
+    <Section title={t('geometry')}>
+      <div className="grid grid-cols-3 gap-3">
+        <Field label={`${t('width')} (600–1200)`}>
+          <NumberInput value={form.d_width} min={600} max={1200} onChange={(v) => set({ d_width: v })} />
+        </Field>
+        <Field label={`${t('height')} (1800–2400)`}>
+          <NumberInput value={form.d_height} min={1800} max={2400} onChange={(v) => set({ d_height: v })} />
+        </Field>
+        <Field label={`${t('frame-thickness')} (10–100)`}>
+          <NumberInput
+            value={form.d_frameThickness}
+            min={10}
+            max={100}
+            onChange={(v) => set({ d_frameThickness: v })}
+          />
+        </Field>
+      </div>
+    </Section>
+    <Section title={t('specifications')}>
+      <Field label={t('door-type')}>
+        <SelectInput value={form.doorType} options={DOOR_TYPES} onChange={(v) => set({ doorType: v })} />
+      </Field>
+      <Field label={t('door-material')}>
+        <SelectInput value={form.doorMaterial} options={DOOR_MATERIALS} onChange={(v) => set({ doorMaterial: v })} />
+      </Field>
+      <CheckboxInput label={t('glazed')} checked={form.doorGlazed} onChange={(v) => set({ doorGlazed: v })} />
+    </Section>
+  </>
+);
+
+// ── LM Studio AI autofill ────────────────────────────────────────────────────
+
+const LM_STUDIO_BASE_URL = process.env.NEXT_PUBLIC_LM_STUDIO_BASE_URL ?? 'http://localhost:1234';
+const LM_STUDIO_MODEL = process.env.NEXT_PUBLIC_LM_STUDIO_MODEL ?? 'qwen/qwen3-vl-8b';
+
+async function toBase64(url: string): Promise<{ base64: string; mimeType: string }> {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const [header, b64] = result.split(',');
+      resolve({ base64: b64, mimeType: header.match(/data:([^;]+)/)?.[1] ?? 'image/jpeg' });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function buildAiPrompt(type: ListingType): string {
+  const typeFields: Record<ListingType, string> = {
+    bricks: [
+      '  "usedOutside": <true if bricks show weathering or outdoor use, false otherwise>',
+      '  "glazed": <true if bricks have a glazed/shiny surface, false otherwise>',
+      '  "brickColour": <one of: "red", "yellow", "brown">'
+    ].join(',\n'),
+    wood: [
+      '  "woodType": <one of: "cedar", "oak", "pine", "douglas fir", "spruce">',
+      '  "structural": <true if the wood appears structural/load-bearing>',
+      '  "outsideUse": <true if wood appears suitable for exterior use>'
+    ].join(',\n'),
+    window: [
+      '  "windowType": <one of: "fixed", "sliding", "casement", "awning">',
+      '  "winWoodType": <one of: "cedar", "oak", "pine", "douglas fir", "spruce">'
+    ].join(',\n'),
+    tile: [
+      '  "tileType": <one of: "ceramic", "slate", "terracota">',
+      '  "tileColour": <one of: "red", "yellow", "blue", "white", "brown", "green">'
+    ].join(',\n'),
+    door: [
+      '  "doorType": <one of: "interior", "exterior", "sliding", "french">',
+      '  "doorMaterial": <one of: "wood", "steel", "aluminum", "upvc">',
+      '  "doorGlazed": <true if the door has glass panels, false otherwise>'
+    ].join(',\n')
+  };
+  return `You are analysing an image of a second-hand building material for a marketplace listing.
+Material type: ${type}
+Look at the image carefully and return ONLY a JSON object with these fields:
+{
+  "name": "A short descriptive title (e.g. 'Reclaimed red clay bricks – minor weathering')",
+  "damage": <integer 1-5: 1=perfect, 2=light wear, 3=moderate, 4=significant, 5=heavy>,
+${typeFields[type]}
+}
+Return ONLY valid JSON. No markdown, no explanation.`;
+}
+
+function parseAiResponse(json: Record<string, unknown>, type: ListingType): Partial<FormData> {
+  const result: Partial<FormData> = {};
+  if (typeof json.name === 'string' && json.name) result.name = json.name;
+  if (typeof json.damage === 'number') result.damage = Math.min(5, Math.max(1, Math.round(json.damage)));
+  switch (type) {
+    case 'bricks':
+      if (typeof json.usedOutside === 'boolean') result.usedOutside = json.usedOutside;
+      if (typeof json.glazed === 'boolean') result.glazed = json.glazed;
+      if (BRICK_COLOURS.includes(json.brickColour as BrickColour)) result.brickColour = json.brickColour as BrickColour;
+      break;
+    case 'wood':
+      if (WOOD_TYPES.includes(json.woodType as WoodType)) result.woodType = json.woodType as WoodType;
+      if (typeof json.structural === 'boolean') result.structural = json.structural;
+      if (typeof json.outsideUse === 'boolean') result.outsideUse = json.outsideUse;
+      break;
+    case 'window':
+      if (WINDOW_TYPES.includes(json.windowType as WindowType)) result.windowType = json.windowType as WindowType;
+      if (WOOD_TYPES.includes(json.winWoodType as WoodType)) result.winWoodType = json.winWoodType as WoodType;
+      break;
+    case 'tile':
+      if (TILE_TYPES.includes(json.tileType as TileType)) result.tileType = json.tileType as TileType;
+      if (TILE_COLOURS.includes(json.tileColour as TileColour)) result.tileColour = json.tileColour as TileColour;
+      break;
+    case 'door':
+      if (DOOR_TYPES.includes(json.doorType as DoorType)) result.doorType = json.doorType as DoorType;
+      if (DOOR_MATERIALS.includes(json.doorMaterial as DoorMaterial))
+        result.doorMaterial = json.doorMaterial as DoorMaterial;
+      if (typeof json.doorGlazed === 'boolean') result.doorGlazed = json.doorGlazed;
+      break;
+  }
+  return result;
+}
+
+async function callLMStudio(imageUrl: string, type: ListingType): Promise<Partial<FormData>> {
+  const { base64, mimeType } = await toBase64(imageUrl);
+  // In dev: call the local Next.js proxy (pages/api/lm-studio.ts) — no CORS.
+  // In production static export this route doesn't exist, so fall back to direct.
+  const endpoint =
+    typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? '/api/lm-studio'
+      : `${LM_STUDIO_BASE_URL.replace(/\/$/, '')}/v1/chat/completions`;
+
+  const basePayload = {
+    model: LM_STUDIO_MODEL,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
+          { type: 'text', text: buildAiPrompt(type) }
+        ]
+      }
+    ],
+    temperature: 0.1
+  };
+
+  const post = (body: object) =>
+    fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+  let response = await post({ ...basePayload, response_format: { type: 'json_object' } });
+  if (response.status >= 400) {
+    response = await post(basePayload);
+  }
+  if (!response.ok) throw new Error(`LM Studio responded with ${response.status}`);
+
+  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
+  const text = data.choices?.[0]?.message?.content ?? '';
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON in response');
+  return parseAiResponse(JSON.parse(jsonMatch[0]) as Record<string, unknown>, type);
+}
+
 // ── Type selector ────────────────────────────────────────────────────────────
 
 export const TypeSelector: React.FC<{ onSelect: (t: ListingType) => void; t: (k: string) => string }> = ({
   onSelect,
-  t,
+  t
 }) => (
   <div className="flex flex-col gap-6 items-center w-full mt-8">
     <h2 className="text-2xl font-bold opacity-80">{t('select-type')}</h2>
@@ -500,13 +688,10 @@ export const CommonFields: React.FC<{
     {selectedType === 'wood' && <WoodFields form={form} set={set} t={t} />}
     {selectedType === 'window' && <WindowFields form={form} set={set} t={t} />}
     {selectedType === 'tile' && <TileFields form={form} set={set} t={t} />}
+    {selectedType === 'door' && <DoorFields form={form} set={set} t={t} />}
 
     <Section title={t('location')}>
-      <CheckboxInput
-        label={t('add-location')}
-        checked={form.hasLocation}
-        onChange={(v) => set({ hasLocation: v })}
-      />
+      <CheckboxInput label={t('add-location')} checked={form.hasLocation} onChange={(v) => set({ hasLocation: v })} />
       {form.hasLocation && (
         <div className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
@@ -580,7 +765,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         city: form.city,
         zipCode: form.zipCode,
         country: form.country,
-        address: form.address,
+        address: form.address
       }
       : undefined;
 
@@ -595,7 +780,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
     quantity: form.quantity,
     availableFrom,
     damage: form.damage,
-    location,
+    location
   };
 
   switch (selectedType) {
@@ -607,7 +792,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         geometry: { width: form.b_width, height: form.b_height, length: form.b_length },
         usedOutside: form.usedOutside,
         glazed: form.glazed,
-        colour: form.brickColour,
+        colour: form.brickColour
       };
     case 'wood':
       return {
@@ -616,7 +801,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'wood' as const,
         geometry: { width: form.w_width, height: form.w_height, length: form.w_length },
         use: { structural: form.structural, outsideUse: form.outsideUse },
-        woodType: form.woodType,
+        woodType: form.woodType
       };
     case 'window':
       return {
@@ -625,7 +810,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'window' as const,
         geometry: { width: form.win_width, frameThickness: form.frameThickness },
         woodType: form.winWoodType,
-        windowType: form.windowType,
+        windowType: form.windowType
       };
     case 'tile':
       return {
@@ -634,7 +819,17 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'tile' as const,
         geometry: { width: form.t_width, length: form.t_length, thickness: form.thickness },
         tileType: form.tileType,
-        colour: form.tileColour,
+        colour: form.tileColour
+      };
+    case 'door':
+      return {
+        ...common,
+        category: 'buildingMaterials' as const,
+        type: 'door' as const,
+        geometry: { width: form.d_width, height: form.d_height, frameThickness: form.d_frameThickness },
+        doorType: form.doorType,
+        material: form.doorMaterial,
+        glazed: form.doorGlazed
       };
   }
 }
@@ -658,7 +853,7 @@ export function listingToForm(listing: ListingData): FormData {
     city: listing.location?.city ?? '',
     zipCode: listing.location?.zipCode ?? '',
     country: listing.location?.country ?? '',
-    address: listing.location?.address ?? '',
+    address: listing.location?.address ?? ''
   };
 
   switch (listing.type) {
@@ -670,7 +865,7 @@ export function listingToForm(listing: ListingData): FormData {
         b_length: listing.geometry.length,
         usedOutside: listing.usedOutside,
         glazed: listing.glazed,
-        brickColour: listing.colour,
+        brickColour: listing.colour
       };
     case 'wood':
       return {
@@ -680,7 +875,7 @@ export function listingToForm(listing: ListingData): FormData {
         w_length: listing.geometry.length,
         structural: listing.use.structural,
         outsideUse: listing.use.outsideUse,
-        woodType: listing.woodType,
+        woodType: listing.woodType
       };
     case 'window':
       return {
@@ -688,7 +883,7 @@ export function listingToForm(listing: ListingData): FormData {
         win_width: listing.geometry.width,
         frameThickness: listing.geometry.frameThickness,
         windowType: listing.windowType,
-        winWoodType: listing.woodType,
+        winWoodType: listing.woodType
       };
     case 'tile':
       return {
@@ -697,7 +892,17 @@ export function listingToForm(listing: ListingData): FormData {
         t_length: listing.geometry.length,
         thickness: listing.geometry.thickness,
         tileType: listing.tileType,
-        tileColour: listing.colour,
+        tileColour: listing.colour
+      };
+    case 'door':
+      return {
+        ...base,
+        d_width: listing.geometry.width,
+        d_height: listing.geometry.height,
+        d_frameThickness: listing.geometry.frameThickness,
+        doorType: listing.doorType,
+        doorMaterial: listing.material,
+        doorGlazed: listing.glazed
       };
   }
 }

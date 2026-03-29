@@ -2,5 +2,6 @@
   "bricks": "Mattoni",
   "wood": "Legno",
   "window": "Finestra",
-  "tile": "Piastrella"
+  "tile": "Piastrella",
+  "door": "Porta"
 }

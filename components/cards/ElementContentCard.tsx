@@ -73,7 +73,7 @@ const PDFModal: React.FC<PDFModalProps> = ({ blobUrl, filename, onClose }) => (
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 
-export const ElementContentCard: React.FC<ICardContentProps> = ({ element }) => {
+export const ElementContentCard: React.FC<ICardContentProps & { highlighted?: boolean }> = ({ element, highlighted }) => {
   const { t } = useTranslation('common');
   const locatedElements = element.location ? [element] : [];
   const previewSpec = useMemo(() => buildListingPreviewSpecFromListing(element), [element]);
@@ -130,7 +130,7 @@ export const ElementContentCard: React.FC<ICardContentProps> = ({ element }) => 
 
   return (
     <>
-      <div className="element-card grid w-full grid-cols-[1fr] md:grid-cols-[1fr_1fr] flex-col items-center overflow-clip shadow-xl mx-auto gap-4">
+      <div data-listing-id={element._id} className={`element-card grid w-full grid-cols-[1fr] md:grid-cols-[1fr_1fr] flex-col items-center overflow-clip shadow-xl mx-auto gap-4 ${highlighted ? 'highlighted' : ''}`}>
         <div className="relative w-full h-[calc(min(50vh,20rem))] md:h-120">
           <ThreeViewerContainer
             preview={previewSpec}

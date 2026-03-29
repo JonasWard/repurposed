@@ -36,5 +36,8 @@
   "colour-blue": "Blå",
   "colour-white": "Hvid",
   "colour-green": "Grøn",
-  "listings-table": "Annonceliste"
+  "listings-table": "Annonceliste",
+  "nav-standard": "Standard",
+  "nav-tools": "Værktøjer",
+  "nav-admin": "Admin"
 }

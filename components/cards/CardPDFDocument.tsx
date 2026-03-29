@@ -240,6 +240,12 @@ function typeSpecificRows(element: ListingData): { label: string; value: string 
         { label: 'Tile type', value: element.tileType },
         { label: 'Colour', value: element.colour },
       ];
+    case 'door':
+      return [
+        { label: 'Door type', value: element.doorType },
+        { label: 'Material', value: element.material },
+        { label: 'Glazed', value: element.glazed ? 'Yes' : 'No' }
+      ];
   }
 }
 

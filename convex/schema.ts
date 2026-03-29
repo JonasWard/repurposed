@@ -121,6 +121,36 @@ export default defineSchema({
         quantity: v.number(),
         location: v.optional(location),
       }),
+
+      v.object({
+        category: v.literal("buildingMaterials"),
+        type: v.literal("door"),
+        name: v.string(),
+        imageUrl: v.optional(v.string()),
+        imageStorageId: v.optional(v.id("_storage")),
+        geometry: v.object({
+          width: v.number(),          // mm
+          height: v.number(),         // mm
+          frameThickness: v.number(), // mm
+        }),
+        doorType: v.union(
+          v.literal("interior"),
+          v.literal("exterior"),
+          v.literal("sliding"),
+          v.literal("french"),
+        ),
+        material: v.union(
+          v.literal("wood"),
+          v.literal("steel"),
+          v.literal("aluminum"),
+          v.literal("upvc"),
+        ),
+        glazed: v.boolean(),
+        damage,
+        availableFrom: v.number(), // timestamp
+        quantity: v.number(),
+        location: v.optional(location),
+      }),
     ),
   )
     .index("by_category", ["category"])
