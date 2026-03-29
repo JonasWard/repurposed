@@ -74,6 +74,15 @@
   filter: saturate(110%);
 }
 
+.element-card.highlighted {
+  filter: saturate(140%);
+  box-shadow: 0 8px 32px 0 rgba(234, 179, 8, 0.55), 0 2px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.element-card.minimal.highlighted {
+  transform: scale(1.04);
+}
+
 
 #__next {
   font-family: 'Poppins', sans-serif;
