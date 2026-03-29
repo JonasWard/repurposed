@@ -36,5 +36,8 @@
   "colour-blue": "Blu",
   "colour-white": "Bianco",
   "colour-green": "Verde",
-  "listings-table": "Elenco annunci"
+  "listings-table": "Elenco annunci",
+  "nav-standard": "Standard",
+  "nav-tools": "Strumenti",
+  "nav-admin": "Admin"
 }
