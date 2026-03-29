@@ -22,20 +22,21 @@ export interface PDFRendererProps {
   /** URL string, File, or Blob of the PDF to display. */
   source?: string | File | null;
   className?: string;
+  initialPage?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export const PDFRenderer: React.FC<PDFRendererProps> = ({ source, className = '' }) => {
+export const PDFRenderer: React.FC<PDFRendererProps> = ({ source, className = '', initialPage = 1 }) => {
   const [numPages, setNumPages] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
 
   const onLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
-    setPage(1);
+    setPage(Math.min(Math.max(initialPage, 1), numPages));
     setError(null);
-  }, []);
+  }, [initialPage]);
 
   const onLoadError = useCallback((err: Error) => {
     setError(err.message);

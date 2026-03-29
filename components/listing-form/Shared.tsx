@@ -115,7 +115,7 @@ export const defaultForm: FormData = {
 // ── Shared field components ──────────────────────────────────────────────────
 
 export const inputClass =
-  'border border-gray-300 bg-white p-2 text-sm w-full focus:outline-none focus:border-gray-600 transition-colors';
+  'border border-gray-200 bg-white px-3 py-2.5 text-sm w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400 transition-all';
 export const selectClass = inputClass;
 
 export const Field: React.FC<{ label: string; hint?: string; children: React.ReactNode }> = ({
@@ -123,18 +123,41 @@ export const Field: React.FC<{ label: string; hint?: string; children: React.Rea
   hint,
   children,
 }) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</label>
+  <div className="flex flex-col gap-1.5">
+    <label className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</label>
     {children}
     {hint && <span className="text-xs text-gray-400">{hint}</span>}
   </div>
 );
 
 export const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <fieldset className="flex flex-col gap-4 border border-gray-200 p-4">
-    <legend className="px-1 text-xs font-bold uppercase tracking-widest text-gray-500">{title}</legend>
-    {children}
-  </fieldset>
+  <div className="flex flex-col gap-4">
+    <h4
+      style={{
+        fontSize: '0.95rem',
+        fontWeight: 600,
+        color: '#1a1a1a',
+        margin: 0,
+        letterSpacing: '-0.01em',
+        textAlign: 'left',
+      }}
+    >
+      {title}
+    </h4>
+    <div
+      style={{
+        background: '#fff',
+        borderRadius: '12px',
+        padding: '1rem 1.25rem',
+        border: '1px solid #e8e8e8',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+      }}
+    >
+      {children}
+    </div>
+  </div>
 );
 
 export const NumberInput: React.FC<{
@@ -425,7 +448,7 @@ export const CommonFields: React.FC<{
   t: (k: string) => string;
   selectedType: ListingType;
 }> = ({ form, set, t, selectedType }) => (
-  <div className="flex flex-col gap-6 max-w-2xl mx-auto mt-6">
+  <div className="flex flex-col gap-5 mt-4">
     <Section title={t('basic-info')}>
       <Field label={t('name')}>
         <input
@@ -552,13 +575,13 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
   const location =
     form.hasLocation && form.lat && form.lng
       ? {
-          lat: parseFloat(form.lat),
-          lng: parseFloat(form.lng),
-          city: form.city,
-          zipCode: form.zipCode,
-          country: form.country,
-          address: form.address,
-        }
+        lat: parseFloat(form.lat),
+        lng: parseFloat(form.lng),
+        city: form.city,
+        zipCode: form.zipCode,
+        country: form.country,
+        address: form.address,
+      }
       : undefined;
 
   const availableFrom = form.availableFrom ? new Date(form.availableFrom).getTime() : Date.now();
