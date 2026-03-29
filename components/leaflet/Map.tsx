@@ -53,7 +53,12 @@ export const Map: React.FC<{ elements: ListingData[]; className: string }> = ({ 
       />
       {located.map((element) => (
         <Marker
-          icon={Leaflet.icon({ iconUrl: repurposedIcon.src, iconSize: [20, 20] })}
+          icon={Leaflet.divIcon({
+            html: `<img src="${repurposedIcon.src}" style="width:100%;height:100%" /></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+            className: ''
+          })}
           key={element._id}
           position={[element.location.lat, element.location.lng]}
           eventHandlers={

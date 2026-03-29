@@ -136,3 +136,7 @@ footer {
   background-color: rgba(var(--color-repurposed-light));
   padding: 3rem 0;
 }
+
+.leaflet-tile {
+  filter: saturate(0%) contrast(1.5)  !important;
+}
