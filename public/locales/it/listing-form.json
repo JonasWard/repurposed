@@ -30,6 +30,8 @@
   "wood-type": "Tipo di legno",
   "window-type": "Tipo di finestra",
   "tile-type": "Tipo di piastrella",
+  "door-type": "Tipo di porta",
+  "door-material": "Materiale",
   "structural": "Uso strutturale",
   "outside-use": "Adatto per uso esterno",
   "image": "Immagine",

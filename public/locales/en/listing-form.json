@@ -30,6 +30,8 @@
   "wood-type": "Wood Type",
   "window-type": "Window Type",
   "tile-type": "Tile Type",
+  "door-type": "Door Type",
+  "door-material": "Material",
   "structural": "Structural use",
   "outside-use": "Suitable for outside use",
   "image": "Image",

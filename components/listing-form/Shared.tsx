@@ -9,6 +9,7 @@ import bricksIcon from '/assets/icons/element-typology/bricks.svg';
 import woodIcon from '/assets/icons/element-typology/wood.svg';
 import windowIcon from '/assets/icons/element-typology/window.svg';
 import tileIcon from '/assets/icons/element-typology/tile.svg';
+import doorIcon from '/assets/icons/element-typology/door.svg';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,18 +19,23 @@ export type BrickColour = 'red' | 'yellow' | 'brown';
 export type TileColour = 'red' | 'yellow' | 'blue' | 'white' | 'brown' | 'green';
 export type TileType = 'ceramic' | 'slate' | 'terracota';
 export type WindowType = 'fixed' | 'sliding' | 'casement' | 'awning';
+export type DoorType = 'interior' | 'exterior' | 'sliding' | 'french';
+export type DoorMaterial = 'wood' | 'steel' | 'aluminum' | 'upvc';
 
 export const WOOD_TYPES: WoodType[] = ['cedar', 'oak', 'pine', 'douglas fir', 'spruce'];
 export const WINDOW_TYPES: WindowType[] = ['fixed', 'sliding', 'casement', 'awning'];
 export const TILE_TYPES: TileType[] = ['ceramic', 'slate', 'terracota'];
 export const BRICK_COLOURS: BrickColour[] = ['red', 'yellow', 'brown'];
 export const TILE_COLOURS: TileColour[] = ['red', 'yellow', 'blue', 'white', 'brown', 'green'];
+export const DOOR_TYPES: DoorType[] = ['interior', 'exterior', 'sliding', 'french'];
+export const DOOR_MATERIALS: DoorMaterial[] = ['wood', 'steel', 'aluminum', 'upvc'];
 
 export const TYPE_ICONS: Record<ListingType, string> = {
   bricks: bricksIcon.src,
   wood: woodIcon.src,
   window: windowIcon.src,
   tile: tileIcon.src,
+  door: doorIcon.src
 };
 
 // ── Form state ───────────────────────────────────────────────────────────────
@@ -73,6 +79,13 @@ export type FormData = {
   thickness: number;
   tileType: TileType;
   tileColour: TileColour;
+  // door
+  d_width: number;
+  d_height: number;
+  d_frameThickness: number;
+  doorType: DoorType;
+  doorMaterial: DoorMaterial;
+  doorGlazed: boolean;
 };
 
 export const defaultForm: FormData = {
@@ -110,6 +123,12 @@ export const defaultForm: FormData = {
   thickness: 20,
   tileType: 'ceramic',
   tileColour: 'white',
+  d_width: 900,
+  d_height: 2100,
+  d_frameThickness: 50,
+  doorType: 'interior',
+  doorMaterial: 'wood',
+  doorGlazed: false
 };
 
 // ── Shared field components ──────────────────────────────────────────────────
@@ -121,7 +140,7 @@ export const selectClass = inputClass;
 export const Field: React.FC<{ label: string; hint?: string; children: React.ReactNode }> = ({
   label,
   hint,
-  children,
+  children
 }) => (
   <div className="flex flex-col gap-1">
     <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</label>
@@ -158,7 +177,7 @@ export const NumberInput: React.FC<{
 export function SelectInput<T extends string>({
   value,
   options,
-  onChange,
+  onChange
 }: {
   value: T;
   options: T[];
@@ -178,7 +197,7 @@ export function SelectInput<T extends string>({
 export const CheckboxInput: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({
   label,
   checked,
-  onChange,
+  onChange
 }) => (
   <label className="flex flex-row items-center gap-2 cursor-pointer text-sm">
     <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4" />
@@ -723,7 +742,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
           city: form.city,
           zipCode: form.zipCode,
           country: form.country,
-          address: form.address,
+          address: form.address
         }
       : undefined;
 
@@ -738,7 +757,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
     quantity: form.quantity,
     availableFrom,
     damage: form.damage,
-    location,
+    location
   };
 
   switch (selectedType) {
@@ -750,7 +769,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         geometry: { width: form.b_width, height: form.b_height, length: form.b_length },
         usedOutside: form.usedOutside,
         glazed: form.glazed,
-        colour: form.brickColour,
+        colour: form.brickColour
       };
     case 'wood':
       return {
@@ -759,7 +778,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'wood' as const,
         geometry: { width: form.w_width, height: form.w_height, length: form.w_length },
         use: { structural: form.structural, outsideUse: form.outsideUse },
-        woodType: form.woodType,
+        woodType: form.woodType
       };
     case 'window':
       return {
@@ -768,7 +787,7 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'window' as const,
         geometry: { width: form.win_width, frameThickness: form.frameThickness },
         woodType: form.winWoodType,
-        windowType: form.windowType,
+        windowType: form.windowType
       };
     case 'tile':
       return {
@@ -777,7 +796,17 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         type: 'tile' as const,
         geometry: { width: form.t_width, length: form.t_length, thickness: form.thickness },
         tileType: form.tileType,
-        colour: form.tileColour,
+        colour: form.tileColour
+      };
+    case 'door':
+      return {
+        ...common,
+        category: 'buildingMaterials' as const,
+        type: 'door' as const,
+        geometry: { width: form.d_width, height: form.d_height, frameThickness: form.d_frameThickness },
+        doorType: form.doorType,
+        material: form.doorMaterial,
+        glazed: form.doorGlazed
       };
   }
 }
@@ -801,7 +830,7 @@ export function listingToForm(listing: ListingData): FormData {
     city: listing.location?.city ?? '',
     zipCode: listing.location?.zipCode ?? '',
     country: listing.location?.country ?? '',
-    address: listing.location?.address ?? '',
+    address: listing.location?.address ?? ''
   };
 
   switch (listing.type) {
@@ -813,7 +842,7 @@ export function listingToForm(listing: ListingData): FormData {
         b_length: listing.geometry.length,
         usedOutside: listing.usedOutside,
         glazed: listing.glazed,
-        brickColour: listing.colour,
+        brickColour: listing.colour
       };
     case 'wood':
       return {
@@ -823,7 +852,7 @@ export function listingToForm(listing: ListingData): FormData {
         w_length: listing.geometry.length,
         structural: listing.use.structural,
         outsideUse: listing.use.outsideUse,
-        woodType: listing.woodType,
+        woodType: listing.woodType
       };
     case 'window':
       return {
@@ -831,7 +860,7 @@ export function listingToForm(listing: ListingData): FormData {
         win_width: listing.geometry.width,
         frameThickness: listing.geometry.frameThickness,
         windowType: listing.windowType,
-        winWoodType: listing.woodType,
+        winWoodType: listing.woodType
       };
     case 'tile':
       return {
@@ -840,7 +869,17 @@ export function listingToForm(listing: ListingData): FormData {
         t_length: listing.geometry.length,
         thickness: listing.geometry.thickness,
         tileType: listing.tileType,
-        tileColour: listing.colour,
+        tileColour: listing.colour
+      };
+    case 'door':
+      return {
+        ...base,
+        d_width: listing.geometry.width,
+        d_height: listing.geometry.height,
+        d_frameThickness: listing.geometry.frameThickness,
+        doorType: listing.doorType,
+        doorMaterial: listing.material,
+        doorGlazed: listing.glazed
       };
   }
 }

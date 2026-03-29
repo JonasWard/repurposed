@@ -30,6 +30,8 @@
   "wood-type": "Holzart",
   "window-type": "Fensterart",
   "tile-type": "Fliesenart",
+  "door-type": "Türart",
+  "door-material": "Material",
   "structural": "Tragende Verwendung",
   "outside-use": "Für den Außenbereich geeignet",
   "image": "Bild",

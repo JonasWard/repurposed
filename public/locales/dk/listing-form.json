@@ -30,6 +30,8 @@
   "wood-type": "Trætype",
   "window-type": "Vinduestype",
   "tile-type": "Flisetype",
+  "door-type": "Dørtype",
+  "door-material": "Materiale",
   "structural": "Bærende brug",
   "outside-use": "Egnet til udendørs brug",
   "image": "Billede",
