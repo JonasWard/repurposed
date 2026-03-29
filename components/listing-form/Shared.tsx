@@ -422,6 +422,42 @@ export const TileFields: React.FC<{
   </>
 );
 
+export const DoorFields: React.FC<{
+  form: FormData;
+  set: (patch: Partial<FormData>) => void;
+  t: (k: string) => string;
+}> = ({ form, set, t }) => (
+  <>
+    <Section title={t('geometry')}>
+      <div className="grid grid-cols-3 gap-3">
+        <Field label={`${t('width')} (600–1200)`}>
+          <NumberInput value={form.d_width} min={600} max={1200} onChange={(v) => set({ d_width: v })} />
+        </Field>
+        <Field label={`${t('height')} (1800–2400)`}>
+          <NumberInput value={form.d_height} min={1800} max={2400} onChange={(v) => set({ d_height: v })} />
+        </Field>
+        <Field label={`${t('frame-thickness')} (10–100)`}>
+          <NumberInput
+            value={form.d_frameThickness}
+            min={10}
+            max={100}
+            onChange={(v) => set({ d_frameThickness: v })}
+          />
+        </Field>
+      </div>
+    </Section>
+    <Section title={t('specifications')}>
+      <Field label={t('door-type')}>
+        <SelectInput value={form.doorType} options={DOOR_TYPES} onChange={(v) => set({ doorType: v })} />
+      </Field>
+      <Field label={t('door-material')}>
+        <SelectInput value={form.doorMaterial} options={DOOR_MATERIALS} onChange={(v) => set({ doorMaterial: v })} />
+      </Field>
+      <CheckboxInput label={t('glazed')} checked={form.doorGlazed} onChange={(v) => set({ doorGlazed: v })} />
+    </Section>
+  </>
+);
+
 // ── LM Studio AI autofill ────────────────────────────────────────────────────
 
 const LM_STUDIO_BASE_URL = process.env.NEXT_PUBLIC_LM_STUDIO_BASE_URL ?? 'http://localhost:1234';
@@ -461,6 +497,11 @@ function buildAiPrompt(type: ListingType): string {
     tile: [
       '  "tileType": <one of: "ceramic", "slate", "terracota">',
       '  "tileColour": <one of: "red", "yellow", "blue", "white", "brown", "green">'
+    ].join(',\n'),
+    door: [
+      '  "doorType": <one of: "interior", "exterior", "sliding", "french">',
+      '  "doorMaterial": <one of: "wood", "steel", "aluminum", "upvc">',
+      '  "doorGlazed": <true if the door has glass panels, false otherwise>'
     ].join(',\n')
   };
   return `You are analysing an image of a second-hand building material for a marketplace listing.
@@ -496,6 +537,12 @@ function parseAiResponse(json: Record<string, unknown>, type: ListingType): Part
     case 'tile':
       if (TILE_TYPES.includes(json.tileType as TileType)) result.tileType = json.tileType as TileType;
       if (TILE_COLOURS.includes(json.tileColour as TileColour)) result.tileColour = json.tileColour as TileColour;
+      break;
+    case 'door':
+      if (DOOR_TYPES.includes(json.doorType as DoorType)) result.doorType = json.doorType as DoorType;
+      if (DOOR_MATERIALS.includes(json.doorMaterial as DoorMaterial))
+        result.doorMaterial = json.doorMaterial as DoorMaterial;
+      if (typeof json.doorGlazed === 'boolean') result.doorGlazed = json.doorGlazed;
       break;
   }
   return result;
@@ -665,6 +712,7 @@ export const CommonFields: React.FC<{
       {selectedType === 'wood' && <WoodFields form={form} set={set} t={t} />}
       {selectedType === 'window' && <WindowFields form={form} set={set} t={t} />}
       {selectedType === 'tile' && <TileFields form={form} set={set} t={t} />}
+      {selectedType === 'door' && <DoorFields form={form} set={set} t={t} />}
 
       <Section title={t('location')}>
         <CheckboxInput label={t('add-location')} checked={form.hasLocation} onChange={(v) => set({ hasLocation: v })} />
@@ -808,6 +856,16 @@ export function buildListingPayload(form: FormData, selectedType: ListingType) {
         material: form.doorMaterial,
         glazed: form.doorGlazed
       };
+    case 'door':
+      return {
+        ...common,
+        category: 'buildingMaterials' as const,
+        type: 'door' as const,
+        geometry: { width: form.d_width, height: form.d_height, frameThickness: form.d_frameThickness },
+        doorType: form.doorType,
+        material: form.doorMaterial,
+        glazed: form.doorGlazed
+      };
   }
 }
 
@@ -870,6 +928,16 @@ export function listingToForm(listing: ListingData): FormData {
         thickness: listing.geometry.thickness,
         tileType: listing.tileType,
         tileColour: listing.colour
+      };
+    case 'door':
+      return {
+        ...base,
+        d_width: listing.geometry.width,
+        d_height: listing.geometry.height,
+        d_frameThickness: listing.geometry.frameThickness,
+        doorType: listing.doorType,
+        doorMaterial: listing.material,
+        doorGlazed: listing.glazed
       };
     case 'door':
       return {
