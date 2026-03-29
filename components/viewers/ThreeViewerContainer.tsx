@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import type { OpenPlans as OpenPlansInstance, Wall, Window } from '@opengeometry/openplans';
 import {
   applyViewerMode,
@@ -15,11 +14,6 @@ import type { ListingPreviewSpec } from '@/lib/openplans/listingPreview';
 type PreviewElement = Wall | Window;
 type OpenPlansModule = typeof import('@opengeometry/openplans');
 type ViewerSurfaceMode = PreviewViewerMode | 'pdf';
-
-const PDFRenderer = dynamic(
-  () => import('@/components/viewers/PDFRenderer').then((m) => m.PDFRenderer),
-  { ssr: false },
-);
 
 interface ThreeViewerContainerProps {
   className?: string;
@@ -157,6 +151,9 @@ export const ThreeViewerContainer: React.FC<ThreeViewerContainerProps> = ({
 
   const showPlaceholder = viewerMode !== 'pdf' && (status !== 'ready' || !preview);
   const showPdfView = Boolean(pdfPreview);
+  const pdfPreviewSrc = pdfPreview?.source
+    ? `${pdfPreview.source}#page=2&view=FitH&toolbar=0&navpanes=0&scrollbar=0`
+    : null;
 
   return (
     <div
@@ -220,7 +217,14 @@ export const ThreeViewerContainer: React.FC<ThreeViewerContainerProps> = ({
         )}
       </div>
 
-      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          visibility: viewerMode === 'pdf' ? 'hidden' : 'visible',
+        }}
+      />
 
       {viewerMode === 'pdf' && showPdfView && (
         <div
@@ -228,10 +232,20 @@ export const ThreeViewerContainer: React.FC<ThreeViewerContainerProps> = ({
             position: 'absolute',
             inset: 0,
             background: '#ffffff',
+            zIndex: 10,
           }}
         >
-          {pdfPreview?.status === 'ready' && pdfPreview.source ? (
-            <PDFRenderer source={pdfPreview.source} className="h-full" initialPage={2} />
+          {pdfPreview?.status === 'ready' && pdfPreviewSrc ? (
+            <iframe
+              title="Technical PDF preview"
+              src={pdfPreviewSrc}
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: '#ffffff',
+              }}
+            />
           ) : (
             <div
               style={{
