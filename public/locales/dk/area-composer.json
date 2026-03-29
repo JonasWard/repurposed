@@ -1,0 +1,21 @@
+{
+  "heading": "Arealkomponist",
+  "area": "Areal",
+  "direction": "Retning",
+  "horizontal": "Vandret",
+  "vertical": "Lodret",
+  "export-rhino-json": "Eksporter Rhino JSON",
+  "unit-face": "flade",
+  "units-needed": "enheder nødvendige",
+  "units-available": "enheder tilgængelige",
+  "coverage": "dækning",
+  "sufficient": "Tilstrækkeligt",
+  "insufficient": "Delvist",
+  "not-composable": "N/A",
+  "no-face-for-direction": "Ingen flade for denne retning",
+  "no-results": "Ingen annoncer matcher filtrene",
+  "select-all": "Vælg alle",
+  "deselect-all": "Fravælg alle",
+  "select-to-see-coverage": "Vælg annoncer for at beregne dækning",
+  "set-area-to-see-coverage": "Angiv et målareal for at beregne dækning"
+}

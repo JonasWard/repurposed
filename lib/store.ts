@@ -6,6 +6,8 @@ export const LOCAL_STORAGE_KEY_DISLIKED = 'disliked';
 
 type ListingId = Id<'listings'>;
 
+export type ViewerMode = 'pdf' | 'ifc' | 'geometry';
+
 type RepurposedStore = {
   liked: Set<ListingId>;
   disliked: Set<ListingId>;
@@ -15,11 +17,16 @@ type RepurposedStore = {
   addDisliked: (disliked: ListingId) => void;
   removeLiked: (likedId: ListingId) => void;
   removeDisliked: (disliked: ListingId) => void;
+  // ── Viewer ──────────────────────────────────────────────────────────────────
+  viewerMode: ViewerMode;
+  setViewerMode: (mode: ViewerMode) => void;
 };
 
 export const useRepurposedStore = create<RepurposedStore>((set, get) => ({
   liked: new Set(),
   disliked: new Set(),
+  viewerMode: 'geometry',
+  setViewerMode: (mode) => set({ viewerMode: mode }),
   _updateLiked: (liked) => {
     set(() => ({ liked }));
     localStorage.setItem(LOCAL_STORAGE_KEY_LIKED, JSON.stringify([...liked.values()]));
