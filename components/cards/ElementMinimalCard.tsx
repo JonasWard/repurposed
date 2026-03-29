@@ -3,11 +3,12 @@ import { ICardContentProps } from '@/lib/cardContent';
 import { ElementDataContent } from './ElementDataContent';
 import { LikeButton } from './cardData/LikeButton';
 
-export const ElementMinimalCard: React.FC<ICardContentProps> = ({ element }) => {
+export const ElementMinimalCard: React.FC<ICardContentProps & { highlighted?: boolean }> = ({ element, highlighted }) => {
   return (
     <Link
       href={`/elements?id=${element._id}`}
-      className={`element-card minimal h-[calc(min(250px,60svh))] overflow-clip shadow-xl`}
+      data-listing-id={element._id}
+      className={`element-card minimal h-[calc(min(250px,60svh))] overflow-clip shadow-xl ${highlighted ? 'highlighted' : ''}`}
     >
       <div className="relative w-full h-[calc(100%-2.5rem)]">
         <img src={element.imageUrl ?? ''} alt={element.name} className="w-full h-full object-cover" />

@@ -5,7 +5,8 @@ import {
   computeColourOptions, computeGeoUnion, GEO,
   type GeoUnion, type ListingType,
 } from '@/lib/listingFilters';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useRepurposedStore } from '@/lib/store';
 import { ElementContentCard } from './ElementContentCard';
 import { ElementMinimalCard } from './ElementMinimalCard';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ const TYPE_ICONS: Record<ListingType, string> = {
   bricks: bricksIcon.src,
   wood: woodIcon.src,
   window: windowIcon.src,
-  tile: tileIcon.src,
+  tile: tileIcon.src
 };
 
 // Local alias so the existing component code is unchanged
@@ -58,7 +59,9 @@ const RangeSlider: React.FC<{
     <div className="flex flex-col gap-1.5 w-full">
       <div className="flex justify-between">
         <span className="text-xs text-gray-500">{label}</span>
-        <span className="text-xs font-medium tabular-nums text-gray-700">{lo} – {hi} mm</span>
+        <span className="text-xs font-medium tabular-nums text-gray-700">
+          {lo} – {hi} mm
+        </span>
       </div>
       <div className="relative h-5 w-full select-none">
         {/* Background track */}
@@ -80,8 +83,12 @@ const RangeSlider: React.FC<{
         />
         {/* Lo input — pointer events disabled on track, enabled only on thumb */}
         <input
-          type="range" min={0} max={LOG_STEPS} step={1} value={loPos}
-          onChange={e => {
+          type="range"
+          min={0}
+          max={LOG_STEPS}
+          step={1}
+          value={loPos}
+          onChange={(e) => {
             const newLo = fromLogPos(Number(e.target.value), min, max);
             onChange([Math.min(newLo, hi - 1), hi]);
           }}
@@ -90,8 +97,12 @@ const RangeSlider: React.FC<{
         />
         {/* Hi input — same trick; higher z when thumbs overlap so hi stays draggable rightward */}
         <input
-          type="range" min={0} max={LOG_STEPS} step={1} value={hiPos}
-          onChange={e => {
+          type="range"
+          min={0}
+          max={LOG_STEPS}
+          step={1}
+          value={hiPos}
+          onChange={(e) => {
             const newHi = fromLogPos(Number(e.target.value), min, max);
             onChange([lo, Math.max(newHi, lo + 1)]);
           }}
@@ -120,7 +131,8 @@ const GeomFilterDropdown: React.FC<{
   const { t } = useTranslation('common');
 
   const isActive =
-    widthRange[0] > union.width[0] || widthRange[1] < union.width[1] ||
+    widthRange[0] > union.width[0] ||
+    widthRange[1] < union.width[1] ||
     (union.height && (heightRange[0] > union.height[0] || heightRange[1] < union.height[1])) ||
     (union.length && (lengthRange[0] > union.length[0] || lengthRange[1] < union.length[1]));
 
@@ -143,28 +155,37 @@ const GeomFilterDropdown: React.FC<{
           <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 shadow-lg z-50 p-4 flex flex-col gap-4 min-w-[240px]">
             <RangeSlider
               label={t('width')}
-              min={union.width[0]} max={union.width[1]}
-              value={widthRange} onChange={onWidth}
+              min={union.width[0]}
+              max={union.width[1]}
+              value={widthRange}
+              onChange={onWidth}
             />
             {union.height && (
               <RangeSlider
                 label={t('height')}
-                min={union.height[0]} max={union.height[1]}
-                value={heightRange} onChange={onHeight}
+                min={union.height[0]}
+                max={union.height[1]}
+                value={heightRange}
+                onChange={onHeight}
               />
             )}
             {union.length && (
               <RangeSlider
                 label={t('length')}
-                min={union.length[0]} max={union.length[1]}
-                value={lengthRange} onChange={onLength}
+                min={union.length[0]}
+                max={union.length[1]}
+                value={lengthRange}
+                onChange={onLength}
               />
             )}
             {isActive && (
               <>
                 <div className="border-t border-gray-100" />
                 <button
-                  onClick={() => { onReset(); setOpen(false); }}
+                  onClick={() => {
+                    onReset();
+                    setOpen(false);
+                  }}
                   className="text-xs text-gray-400 hover:text-gray-700 text-left transition-colors"
                 >
                   {t('clear-filter')}
@@ -198,7 +219,9 @@ const DetailLevelSelector: React.FC<{
             type="radio"
             value={dL}
           />
-          <label htmlFor={`dl-${dL}`} className="text-sm cursor-pointer">{t(dL)}</label>
+          <label htmlFor={`dl-${dL}`} className="text-sm cursor-pointer">
+            {t(dL)}
+          </label>
         </div>
       ))}
     </span>
@@ -216,15 +239,12 @@ const TypeMultiSelect: React.FC<{
   const { t: tc } = useTranslation('common');
   const [open, setOpen] = useState(false);
 
-  const label =
-    activeTypes.size === 0
-      ? tc('all-types')
-      : [...activeTypes].map((type) => te(type)).join(', ');
+  const label = activeTypes.size === 0 ? tc('all-types') : [...activeTypes].map((type) => te(type)).join(', ');
 
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 px-2.5 py-1 text-sm border border-gray-300 bg-white hover:border-gray-500 transition-colors"
       >
         <span className="max-w-[160px] truncate text-left text-gray-700">{label}</span>
@@ -243,7 +263,9 @@ const TypeMultiSelect: React.FC<{
                   onClick={() => onToggle(type)}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-sm hover:bg-gray-50 transition-colors text-left"
                 >
-                  <span className={`w-4 h-4 border flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900 border-gray-900' : 'border-gray-300'}`}>
+                  <span
+                    className={`w-4 h-4 border flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900 border-gray-900' : 'border-gray-300'}`}
+                  >
                     {checked && <span className="text-white text-[10px] leading-none">✓</span>}
                   </span>
                   <img src={TYPE_ICONS[type]} className="w-4 h-4 opacity-60" alt="" />
@@ -255,7 +277,10 @@ const TypeMultiSelect: React.FC<{
               <>
                 <div className="border-t border-gray-100 mx-3 my-1" />
                 <button
-                  onClick={() => { onClear(); setOpen(false); }}
+                  onClick={() => {
+                    onClear();
+                    setOpen(false);
+                  }}
                   className="w-full px-3 py-1.5 text-xs text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-left transition-colors"
                 >
                   {tc('clear-filter')}
@@ -287,23 +312,21 @@ const ColourMultiSelect: React.FC<{
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         className={`flex items-center gap-2 px-2.5 py-1 text-sm border bg-white transition-colors ${
           isActive ? 'border-gray-800 text-gray-900' : 'border-gray-300 text-gray-700 hover:border-gray-500'
         }`}
       >
         {isActive ? (
           <span className="flex items-center gap-1">
-            {[...activeColours].slice(0, 5).map(c => (
+            {[...activeColours].slice(0, 5).map((c) => (
               <span
                 key={c}
                 className="w-3 h-3 rounded-full border border-black/10 flex-shrink-0"
                 style={{ backgroundColor: COLOUR_SWATCHES[c] }}
               />
             ))}
-            {activeColours.size > 5 && (
-              <span className="text-xs text-gray-500">+{activeColours.size - 5}</span>
-            )}
+            {activeColours.size > 5 && <span className="text-xs text-gray-500">+{activeColours.size - 5}</span>}
           </span>
         ) : (
           <span>{t('all-colours')}</span>
@@ -316,7 +339,7 @@ const ColourMultiSelect: React.FC<{
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 shadow-lg z-50 min-w-[160px]">
-            {availableColours.map(colour => {
+            {availableColours.map((colour) => {
               const checked = activeColours.has(colour);
               return (
                 <button
@@ -324,7 +347,9 @@ const ColourMultiSelect: React.FC<{
                   onClick={() => onToggle(colour)}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-sm hover:bg-gray-50 transition-colors text-left"
                 >
-                  <span className={`w-4 h-4 border flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900 border-gray-900' : 'border-gray-300'}`}>
+                  <span
+                    className={`w-4 h-4 border flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-gray-900 border-gray-900' : 'border-gray-300'}`}
+                  >
                     {checked && <span className="text-white text-[10px] leading-none">✓</span>}
                   </span>
                   <span
@@ -339,7 +364,10 @@ const ColourMultiSelect: React.FC<{
               <>
                 <div className="border-t border-gray-100 mx-3 my-1" />
                 <button
-                  onClick={() => { onClear(); setOpen(false); }}
+                  onClick={() => {
+                    onClear();
+                    setOpen(false);
+                  }}
                   className="w-full px-3 py-1.5 text-xs text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-left transition-colors"
                 >
                   {t('clear-filter')}
@@ -361,41 +389,70 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
 
   // Type filter
   const [activeTypes, setActiveTypes] = useState<Set<ListingType>>(new Set());
-  const toggleType = (type: ListingType) => setActiveTypes(prev => {
-    const next = new Set(prev);
-    next.has(type) ? next.delete(type) : next.add(type);
-    return next;
-  });
+  const toggleType = (type: ListingType) =>
+    setActiveTypes((prev) => {
+      const next = new Set(prev);
+      next.has(type) ? next.delete(type) : next.add(type);
+      return next;
+    });
   const clearTypes = () => setActiveTypes(new Set());
 
   // Colour filter
   const [activeColours, setActiveColours] = useState<Set<Colour>>(new Set());
-  const toggleColour = (c: Colour) => setActiveColours(prev => {
-    const next = new Set(prev);
-    next.has(c) ? next.delete(c) : next.add(c);
-    return next;
-  });
+  const toggleColour = (c: Colour) =>
+    setActiveColours((prev) => {
+      const next = new Set(prev);
+      next.has(c) ? next.delete(c) : next.add(c);
+      return next;
+    });
   const clearColours = () => setActiveColours(new Set());
 
   // Reset colour selection when type filter changes (available colours may shrink)
-  useEffect(() => { setActiveColours(new Set()); }, [activeTypes]);
+  useEffect(() => {
+    setActiveColours(new Set());
+  }, [activeTypes]);
 
   const availableColours = computeColourOptions(activeTypes);
 
-  // Geometry filter — initialised from full union (all types), reset when active types change
-  const initUnion = computeUnion(new Set());
-  const [widthRange, setWidthRange]   = useState<[number, number]>(initUnion.width);
-  const [heightRange, setHeightRange] = useState<[number, number]>(initUnion.height ?? [0, 0]);
-  const [lengthRange, setLengthRange] = useState<[number, number]>(initUnion.length ?? [0, 0]);
+  // Geometry bounds derived from ACTUAL element data so listings outside the
+  // hardcoded GEO constants are never silently filtered out.
+  const geomUnion = useMemo((): GeoUnion => {
+    const relevant = activeTypes.size > 0
+      ? elements.filter(e => activeTypes.has(e.type as ListingType))
+      : elements;
+    if (relevant.length === 0) return computeUnion(activeTypes);
 
+    let wLo = Infinity, wHi = -Infinity;
+    let hLo = Infinity, hHi = -Infinity, hasH = false;
+    let lLo = Infinity, lHi = -Infinity, hasL = false;
+
+    for (const e of relevant) {
+      const g = e.geometry as Record<string, number>;
+      wLo = Math.min(wLo, g.width); wHi = Math.max(wHi, g.width);
+      if ('height' in g) { hasH = true; hLo = Math.min(hLo, g.height); hHi = Math.max(hHi, g.height); }
+      if ('length' in g) { hasL = true; lLo = Math.min(lLo, g.length); lHi = Math.max(lHi, g.length); }
+    }
+
+    return {
+      width:  [wLo, wHi],
+      height: hasH ? [hLo, hHi] : null,
+      length: hasL ? [lLo, lHi] : null,
+    };
+  }, [elements, activeTypes]);
+
+  const [widthRange, setWidthRange]   = useState<[number, number]>(geomUnion.width);
+  const [heightRange, setHeightRange] = useState<[number, number]>(geomUnion.height ?? [0, 0]);
+  const [lengthRange, setLengthRange] = useState<[number, number]>(geomUnion.length ?? [0, 0]);
+
+  // Reset slider ranges to the actual data bounds whenever the type filter changes.
   useEffect(() => {
-    const u = computeUnion(activeTypes);
-    setWidthRange(u.width);
-    if (u.height) setHeightRange(u.height);
-    if (u.length) setLengthRange(u.length);
+    setWidthRange(geomUnion.width);
+    if (geomUnion.height) setHeightRange(geomUnion.height);
+    if (geomUnion.length) setLengthRange(geomUnion.length);
+  // geomUnion already depends on activeTypes; we intentionally don't re-run when
+  // only new elements arrive (would reset user-chosen ranges mid-session).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTypes]);
-
-  const geomUnion = computeUnion(activeTypes);
 
   const [geomOpen, setGeomOpen] = useState(false);
 
@@ -406,24 +463,27 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
   };
 
   const isGeomActive =
-    widthRange[0] > geomUnion.width[0] || widthRange[1] < geomUnion.width[1] ||
+    widthRange[0] > geomUnion.width[0] ||
+    widthRange[1] < geomUnion.width[1] ||
     !!(geomUnion.height && (heightRange[0] > geomUnion.height[0] || heightRange[1] < geomUnion.height[1])) ||
     !!(geomUnion.length && (lengthRange[0] > geomUnion.length[0] || lengthRange[1] < geomUnion.length[1]));
 
   const isAnyFilterActive = activeTypes.size > 0 || isGeomActive || activeColours.size > 0;
 
   const clearAllFilters = () => {
-    const fullUnion = computeUnion(new Set());
+    // geomUnion with empty activeTypes = bounds across ALL elements
     setActiveTypes(new Set());
-    setWidthRange(fullUnion.width);
-    if (fullUnion.height) setHeightRange(fullUnion.height);
-    if (fullUnion.length) setLengthRange(fullUnion.length);
+    // Ranges will be reset by the useEffect above; also set immediately so
+    // the filter clears on the same render cycle.
+    setWidthRange(geomUnion.width);
+    if (geomUnion.height) setHeightRange(geomUnion.height);
+    if (geomUnion.length) setLengthRange(geomUnion.length);
     setActiveColours(new Set());
     setGeomOpen(false);
   };
 
   // Apply filters
-  const filteredElements = elements.filter(listing => {
+  const filteredElements = elements.filter((listing) => {
     // Type filter
     if (activeTypes.size > 0 && !activeTypes.has(listing.type as ListingType)) return false;
 
@@ -440,6 +500,18 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
 
     return true;
   });
+
+  // ── Map-marker focus ─────────────────────────────────────────────────────────
+  const focusedListingId    = useRepurposedStore((s) => s.focusedListingId);
+  const setFocusedListingId = useRepurposedStore((s) => s.setFocusedListingId);
+
+  useEffect(() => {
+    if (!focusedListingId) return;
+    const node = document.querySelector(`[data-listing-id="${focusedListingId}"]`);
+    node?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const t = setTimeout(() => setFocusedListingId(null), 2500);
+    return () => clearTimeout(t);
+  }, [focusedListingId, setFocusedListingId]);
 
   return (
     <div className={`${className} overlfow-y-none grid grid-rows-[auto_1fr] w-full`}>
@@ -488,9 +560,17 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
           <div className={`element-card-grid card-grid-padding ${localDetailLevel}`}>
             {filteredElements.map((element) =>
               localDetailLevel === 'minimal' ? (
-                <ElementMinimalCard key={element._id} element={element} />
+                <ElementMinimalCard
+                  key={element._id}
+                  element={element}
+                  highlighted={focusedListingId === element._id}
+                />
               ) : (
-                <ElementContentCard key={element._id} element={element} />
+                <ElementContentCard
+                  key={element._id}
+                  element={element}
+                  highlighted={focusedListingId === element._id}
+                />
               )
             )}
           </div>
@@ -498,4 +578,4 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
       </div>
     </div>
   );
-};
+};;;
