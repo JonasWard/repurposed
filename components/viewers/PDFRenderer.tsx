@@ -12,11 +12,9 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Point the PDF.js worker at the copy shipped with react-pdf.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Use the unpkg CDN for the PDF.js worker — avoids Next.js/webpack ESM issues
+// with new URL('esm-package', import.meta.url).
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
