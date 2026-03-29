@@ -4,6 +4,7 @@ import bricks from '/assets/icons/element-typology/bricks.svg';
 import wood from '/assets/icons/element-typology/wood.svg';
 import window from '/assets/icons/element-typology/window.svg';
 import tile from '/assets/icons/element-typology/tile.svg';
+import door from '/assets/icons/element-typology/door.svg';
 import { useTranslation } from 'react-i18next';
 import { CardDetailLevel } from '@/lib/cardContent';
 import { IconText } from './IconText';
@@ -39,5 +40,7 @@ const ElementTypologyIcon: React.FC<{ listingType: (typeof ListingTypes)[number]
       return <SVGIcon src={window.src} className={sizeClass} />;
     case 'tile':
       return <SVGIcon src={tile.src} className={sizeClass} />;
+    case 'door':
+      return <SVGIcon src={door.src} className={sizeClass} />;
   }
 };

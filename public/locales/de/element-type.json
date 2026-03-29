@@ -2,5 +2,6 @@
   "bricks": "Ziegel",
   "wood": "Holz",
   "window": "Fenster",
-  "tile": "Fliese"
+  "tile": "Fliese",
+  "door": "Tür"
 }

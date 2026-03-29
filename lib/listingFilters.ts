@@ -13,6 +13,7 @@ export const COLOUR_OPTIONS: Record<ListingType, readonly Colour[]> = {
   wood:   [],
   window: [],
   tile:   ['red', 'yellow', 'brown', 'blue', 'white', 'green'],
+  door:   [],
 };
 
 export const COLOUR_SWATCHES: Record<Colour, string> = {
@@ -38,10 +39,11 @@ export const GEO: Record<ListingType, {
   height?: [number, number];
   length?: [number, number];
 }> = {
-  bricks: { width: [30, 120],   height: [15, 250],  length: [120, 600]  },
-  wood:   { width: [50, 5000],  height: [50, 5000], length: [100, 5000] },
-  window: { width: [200, 2000]                                           },
-  tile:   { width: [200, 2000],                      length: [50, 500]  },
+  bricks: { width: [30, 120],    height: [15, 250],    length: [120, 600]   },
+  wood:   { width: [50, 5000],   height: [50, 5000],   length: [100, 5000]  },
+  window: { width: [200, 2000]                                               },
+  tile:   { width: [200, 2000],                         length: [50, 500]   },
+  door:   { width: [600, 1200],  height: [1800, 2400]                       },
 };
 
 export type GeoUnion = {

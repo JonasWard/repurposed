@@ -30,6 +30,8 @@
   "wood-type": "Type de bois",
   "window-type": "Type de fenêtre",
   "tile-type": "Type de tuile",
+  "door-type": "Type de porte",
+  "door-material": "Matériau",
   "structural": "Usage structurel",
   "outside-use": "Convient à l'extérieur",
   "image": "Image",

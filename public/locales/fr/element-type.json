@@ -2,5 +2,6 @@
   "bricks": "Briques",
   "wood": "Bois",
   "window": "Fenêtre",
-  "tile": "Tuile"
+  "tile": "Tuile",
+  "door": "Porte"
 }
