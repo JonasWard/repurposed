@@ -8,7 +8,7 @@ import { ListingData } from '@/lib/elements';
 import * as Leaflet from 'leaflet';
 import { useRouter } from 'next/router';
 import { useRepurposedStore } from '@/lib/store';
-import repurposedIcon from '/assets/icons/repurposed.svg';
+import repurposedIcon from '/assets/icons/repurposed_heart.svg';
 
 type LocatedListing = ListingData & { location: NonNullable<ListingData['location']> };
 
@@ -53,12 +53,16 @@ export const Map: React.FC<{ elements: ListingData[]; className: string }> = ({ 
       />
       {located.map((element) => (
         <Marker
-          icon={Leaflet.icon({ iconUrl: repurposedIcon.src, iconSize: [32, 32] })}
+          icon={Leaflet.icon({ iconUrl: repurposedIcon.src, iconSize: [20, 20] })}
           key={element._id}
           position={[element.location.lat, element.location.lng]}
-          eventHandlers={isAllElements ? {
-            click: () => setFocusedListingId(element._id),
-          } : undefined}
+          eventHandlers={
+            isAllElements
+              ? {
+                  click: () => setFocusedListingId(element._id)
+                }
+              : undefined
+          }
         />
       ))}
     </MapContainer>
