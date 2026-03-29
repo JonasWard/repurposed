@@ -5,7 +5,7 @@ import {
   computeColourOptions, computeGeoUnion, GEO,
   type GeoUnion, type ListingType,
 } from '@/lib/listingFilters';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRepurposedStore } from '@/lib/store';
 import { ElementContentCard } from './ElementContentCard';
 import { ElementMinimalCard } from './ElementMinimalCard';
@@ -414,20 +414,45 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
 
   const availableColours = computeColourOptions(activeTypes);
 
-  // Geometry filter — initialised from full union (all types), reset when active types change
-  const initUnion = computeUnion(new Set());
-  const [widthRange, setWidthRange] = useState<[number, number]>(initUnion.width);
-  const [heightRange, setHeightRange] = useState<[number, number]>(initUnion.height ?? [0, 0]);
-  const [lengthRange, setLengthRange] = useState<[number, number]>(initUnion.length ?? [0, 0]);
+  // Geometry bounds derived from ACTUAL element data so listings outside the
+  // hardcoded GEO constants are never silently filtered out.
+  const geomUnion = useMemo((): GeoUnion => {
+    const relevant = activeTypes.size > 0
+      ? elements.filter(e => activeTypes.has(e.type as ListingType))
+      : elements;
+    if (relevant.length === 0) return computeUnion(activeTypes);
 
+    let wLo = Infinity, wHi = -Infinity;
+    let hLo = Infinity, hHi = -Infinity, hasH = false;
+    let lLo = Infinity, lHi = -Infinity, hasL = false;
+
+    for (const e of relevant) {
+      const g = e.geometry as Record<string, number>;
+      wLo = Math.min(wLo, g.width); wHi = Math.max(wHi, g.width);
+      if ('height' in g) { hasH = true; hLo = Math.min(hLo, g.height); hHi = Math.max(hHi, g.height); }
+      if ('length' in g) { hasL = true; lLo = Math.min(lLo, g.length); lHi = Math.max(lHi, g.length); }
+    }
+
+    return {
+      width:  [wLo, wHi],
+      height: hasH ? [hLo, hHi] : null,
+      length: hasL ? [lLo, lHi] : null,
+    };
+  }, [elements, activeTypes]);
+
+  const [widthRange, setWidthRange]   = useState<[number, number]>(geomUnion.width);
+  const [heightRange, setHeightRange] = useState<[number, number]>(geomUnion.height ?? [0, 0]);
+  const [lengthRange, setLengthRange] = useState<[number, number]>(geomUnion.length ?? [0, 0]);
+
+  // Reset slider ranges to the actual data bounds whenever the type filter changes.
   useEffect(() => {
-    const u = computeUnion(activeTypes);
-    setWidthRange(u.width);
-    if (u.height) setHeightRange(u.height);
-    if (u.length) setLengthRange(u.length);
+    setWidthRange(geomUnion.width);
+    if (geomUnion.height) setHeightRange(geomUnion.height);
+    if (geomUnion.length) setLengthRange(geomUnion.length);
+  // geomUnion already depends on activeTypes; we intentionally don't re-run when
+  // only new elements arrive (would reset user-chosen ranges mid-session).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTypes]);
-
-  const geomUnion = computeUnion(activeTypes);
 
   const [geomOpen, setGeomOpen] = useState(false);
 
@@ -446,11 +471,13 @@ export const CardRenderer: React.FC<ICardDisplayProps> = ({ detailLevel, element
   const isAnyFilterActive = activeTypes.size > 0 || isGeomActive || activeColours.size > 0;
 
   const clearAllFilters = () => {
-    const fullUnion = computeUnion(new Set());
+    // geomUnion with empty activeTypes = bounds across ALL elements
     setActiveTypes(new Set());
-    setWidthRange(fullUnion.width);
-    if (fullUnion.height) setHeightRange(fullUnion.height);
-    if (fullUnion.length) setLengthRange(fullUnion.length);
+    // Ranges will be reset by the useEffect above; also set immediately so
+    // the filter clears on the same render cycle.
+    setWidthRange(geomUnion.width);
+    if (geomUnion.height) setHeightRange(geomUnion.height);
+    if (geomUnion.length) setLengthRange(geomUnion.length);
     setActiveColours(new Set());
     setGeomOpen(false);
   };
