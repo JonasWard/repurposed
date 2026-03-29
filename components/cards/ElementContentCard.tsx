@@ -1,13 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { pdf } from '@react-pdf/renderer';
 import QRCode from 'qrcode';
 import { useTranslation } from 'react-i18next';
 import { SVGIcon } from '@/components/SVGIcon';
 import { Map } from '@/components/leaflet/LazyMap';
+import { ThreeViewerContainer } from '@/components/viewers/ThreeViewerContainer';
 import cart from '/assets/icons/shopping_cart.svg';
 import { ICardContentProps } from '@/lib/cardContent';
 import { ListingData } from '@/lib/elements';
+import { buildListingPreviewSpecFromListing } from '@/lib/openplans/listingPreview';
+import { generateListingDrawingSet } from '@/lib/openplans/client';
 import { ElementDataContent } from './ElementDataContent';
 import { CardPDFDocument } from './CardPDFDocument';
 import { Button } from '../Button';
@@ -73,32 +76,54 @@ const PDFModal: React.FC<PDFModalProps> = ({ blobUrl, filename, onClose }) => (
 export const ElementContentCard: React.FC<ICardContentProps & { highlighted?: boolean }> = ({ element, highlighted }) => {
   const { t } = useTranslation('common');
   const locatedElements = element.location ? [element] : [];
+  const previewSpec = useMemo(() => buildListingPreviewSpecFromListing(element), [element]);
 
   const [pdfState, setPdfState] = useState<
     { status: 'idle' } | { status: 'generating' } | { status: 'ready'; url: string }
   >({ status: 'idle' });
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
-  const handlePDF = useCallback(async () => {
+  const ensurePdfPreview = useCallback(async () => {
     if (pdfState.status === 'ready') {
-      return;
+      return pdfState.url;
+    }
+    if (pdfState.status === 'generating') {
+      return null;
     }
     setPdfState({ status: 'generating' });
     try {
       const elementUrl = `${window.location.origin}/${window.location.pathname.split('/')[1]}/elements/?id=${element._id}`;
       const qrDataUrl = await QRCode.toDataURL(elementUrl, { width: 160, margin: 1 });
-      const blob = await pdf(<CardPDFDocument element={element} qrDataUrl={qrDataUrl} />).toBlob();
+      const technicalDrawings = await generateListingDrawingSet(previewSpec);
+      const blob = await pdf(
+        <CardPDFDocument element={element} qrDataUrl={qrDataUrl} technicalDrawings={technicalDrawings} />,
+      ).toBlob();
       const url = URL.createObjectURL(blob);
       setPdfState({ status: 'ready', url });
+      return url;
     } catch {
       setPdfState({ status: 'idle' });
+      return null;
     }
-  }, [element, pdfState.status]);
+  }, [element, pdfState.status, previewSpec]);
+
+  const handlePDF = useCallback(async () => {
+    const url = await ensurePdfPreview();
+    if (url) {
+      setIsPdfModalOpen(true);
+    }
+  }, [ensurePdfPreview]);
 
   const handleClose = useCallback(() => {
-    if (pdfState.status === 'ready') {
-      URL.revokeObjectURL(pdfState.url);
-    }
-    setPdfState({ status: 'idle' });
+    setIsPdfModalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pdfState.status === 'ready') {
+        URL.revokeObjectURL(pdfState.url);
+      }
+    };
   }, [pdfState]);
 
   const filename = `${element.name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
@@ -107,7 +132,16 @@ export const ElementContentCard: React.FC<ICardContentProps & { highlighted?: bo
     <>
       <div data-listing-id={element._id} className={`element-card grid w-full grid-cols-[1fr] md:grid-cols-[1fr_1fr] flex-col items-center overflow-clip shadow-xl mx-auto gap-4 ${highlighted ? 'highlighted' : ''}`}>
         <div className="relative w-full h-[calc(min(50vh,20rem))] md:h-120">
-          <img src={element.imageUrl ?? ''} alt={element.name} className="w-full h-full object-cover" />
+          <ThreeViewerContainer
+            preview={previewSpec}
+            className="h-full"
+            minHeight="100%"
+            pdfPreview={{
+              source: pdfState.status === 'ready' ? pdfState.url : null,
+              status: pdfState.status,
+              ensureSource: ensurePdfPreview,
+            }}
+          />
         </div>
         <div className="my-auto p-3 font-bold flex flex-col items-start justify-between w-full gap-4 shadow-none h-full">
           <h3 className="md:pt-4">{t(`element-type:${element.type}`)}</h3>
@@ -143,7 +177,7 @@ export const ElementContentCard: React.FC<ICardContentProps & { highlighted?: bo
       </div>
 
       {/* PDF preview modal (portal-style, renders outside card DOM) */}
-      {pdfState.status === 'ready' && (
+      {isPdfModalOpen && pdfState.status === 'ready' && (
         <PDFModal blobUrl={pdfState.url} filename={filename} onClose={handleClose} />
       )}
     </>

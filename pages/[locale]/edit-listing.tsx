@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from 'convex/react';
 import { useTranslation } from 'next-i18next';
@@ -7,7 +7,9 @@ import { Id } from '@/convex/_generated/dataModel';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/Button';
 import { SVGIcon } from '@/components/SVGIcon';
+import { ThreeViewerContainer } from '@/components/viewers/ThreeViewerContainer';
 import { getStaticPaths, makeStaticProps } from '@/lib/getStatic';
+import { buildListingPreviewSpecFromForm } from '@/lib/openplans/listingPreview';
 import {
   type ListingType,
   type FormData,
@@ -78,6 +80,10 @@ const EditListing: React.FC = () => {
 
   const isLoading = !router.isReady || (listingId !== undefined && listing === undefined);
   const selectedType = listing?.type as ListingType | undefined;
+  const previewSpec = useMemo(
+    () => (selectedType && initialised ? buildListingPreviewSpecFromForm(form, selectedType) : null),
+    [form, initialised, selectedType],
+  );
 
   return (
     <>
@@ -90,33 +96,112 @@ const EditListing: React.FC = () => {
         withoutTopMargin
       />
 
-      <main className="w-full max-w-standard-div mx-auto px-4 pb-16 pt-20">
-        {isLoading && (
+      {isLoading && (
+        <main className="w-full max-w-standard-div mx-auto px-4 pb-16 pt-20">
           <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Loading…</div>
-        )}
+        </main>
+      )}
 
-        {!isLoading && !listing && listingId && (
+      {!isLoading && !listing && listingId && (
+        <main className="w-full max-w-standard-div mx-auto px-4 pb-16 pt-20">
           <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Listing not found.</div>
-        )}
+        </main>
+      )}
 
-        {!isLoading && listing && !done && selectedType && initialised && (
-          <>
-            <div className="flex flex-row items-center gap-3 max-w-2xl mx-auto mt-6">
+      {!isLoading && listing && !done && selectedType && initialised && (
+        <main className="configurator-main">
+          <div
+            style={{
+              flex: '1 1 50%',
+              minWidth: 0,
+              display: 'flex',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              background: '#f5f5f5',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+            }}
+          >
+            <ThreeViewerContainer preview={previewSpec} />
+          </div>
+
+          <div
+            style={{
+              flex: '1 1 50%',
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem 0',
+                borderBottom: '1px solid #eee',
+                marginBottom: '0.75rem',
+                flexShrink: 0,
+              }}
+            >
               <button
                 onClick={() => router.back()}
-                className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  border: '1px solid #e0e0e0',
+                  background: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  color: '#666',
+                  transition: 'all 0.15s',
+                  flexShrink: 0,
+                }}
               >
-                ← {t('back')}
+                ←
               </button>
-              <div className="flex flex-row items-center gap-2">
-                <SVGIcon src={TYPE_ICONS[selectedType]} className="h-6 w-6" />
-                <h3 className="capitalize">{selectedType}</h3>
+              <SVGIcon src={TYPE_ICONS[selectedType]} className="h-6 w-6" />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: '#1a1a1a',
+                    lineHeight: 1.2,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {t('edit-page-title')} {selectedType}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.3 }}>
+                  Adjust the listing and see the live technical preview update.
+                </span>
               </div>
             </div>
 
-            <CommonFields form={form} set={set} t={t} selectedType={selectedType} />
+            <div
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                paddingRight: '0.5rem',
+                paddingBottom: '1rem',
+              }}
+            >
+              <CommonFields form={form} set={set} t={t} selectedType={selectedType} />
+            </div>
 
-            <div className="max-w-2xl mx-auto mt-6">
+            <div
+              style={{
+                flexShrink: 0,
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #eee',
+              }}
+            >
               <Button
                 onClick={handleSubmit}
                 disabled={submitting || !form.name}
@@ -125,11 +210,15 @@ const EditListing: React.FC = () => {
                 {submitting ? t('saving') : t('save-changes')}
               </Button>
             </div>
-          </>
-        )}
+          </div>
+        </main>
+      )}
 
-        {done && listingId && <SuccessScreen listingId={listingId} t={t} />}
-      </main>
+      {done && listingId && (
+        <main className="w-full max-w-standard-div mx-auto px-4 pb-16 pt-20">
+          <SuccessScreen listingId={listingId} t={t} />
+        </main>
+      )}
     </>
   );
 };

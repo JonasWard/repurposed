@@ -20,6 +20,7 @@ import bricksIcon from '/assets/icons/element-typology/bricks.svg';
 import woodIcon from '/assets/icons/element-typology/wood.svg';
 import windowIcon from '/assets/icons/element-typology/window.svg';
 import tileIcon from '/assets/icons/element-typology/tile.svg';
+import doorIcon from '/assets/icons/element-typology/door.svg';
 
 // ── Shared primitives (mirrored from CardRenderer) ────────────────────────────
 
@@ -28,6 +29,7 @@ const TYPE_ICONS: Record<ListingType, string> = {
   wood:   woodIcon.src,
   window: windowIcon.src,
   tile:   tileIcon.src,
+  door:   doorIcon.src,
 };
 
 const LOG_STEPS = 1000;

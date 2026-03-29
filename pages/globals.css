@@ -3,8 +3,7 @@
 
 
 :root {
-  --color-repurposed: #rgb(0, 109, 139)
-  --color-repurposed-light: #b792f7;
+  --color-repurposed: #rgb(0, 109, 139) --color-repurposed-light: #b792f7;
   --color-background: color-mix(in oklab, var(--color-repurposed-light) 0%, white 100%);
   --default-max-width: 1200px;
   --standard-page-max-width: calc(min(100vw, var(--default-max-width)));
@@ -29,7 +28,8 @@
 
 .max-w-standard-div {
   max-width: var(--card_grid-max-width);
-  margin: 0 auto;}
+  margin: 0 auto;
+}
 
 .standard-padding {
   padding: 0 var(--card_grid_other_content_padding-lr);
@@ -137,6 +137,50 @@ footer {
   padding: 3rem 0;
 }
 
+/* ── Configurator layout override ──────────────────────── */
+
+main.configurator-main {
+  width: 100%;
+  max-width: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100dvh;
+  max-height: 100dvh;
+  flex: none;
+  padding: 4.5rem 2rem 1.5rem;
+  gap: 1.5rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+main.configurator-main * {
+  text-align: left;
+}
+
+#__next:has(.configurator-main) {
+  min-height: unset;
+  height: 100dvh;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  main.configurator-main {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+    padding: 5.5rem 1rem 1rem;
+    overflow: auto;
+  }
+
+  #__next:has(.configurator-main) {
+    height: auto;
+    overflow: auto;
+  }
+}
+
 .leaflet-tile {
-  filter: saturate(0%) contrast(1.5)  !important;
+  filter: saturate(0%) contrast(1.5) !important;
 }
