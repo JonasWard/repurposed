@@ -94,6 +94,31 @@ const tileV = v.object({
   location: locationV,
 });
 
+const doorV = v.object({
+  category: v.literal("buildingMaterials"),
+  type: v.literal("door"),
+  name: v.string(),
+  ...imageFields,
+  geometry: v.object({ width: v.number(), height: v.number(), frameThickness: v.number() }),
+  doorType: v.union(
+    v.literal("interior"),
+    v.literal("exterior"),
+    v.literal("sliding"),
+    v.literal("french"),
+  ),
+  material: v.union(
+    v.literal("wood"),
+    v.literal("steel"),
+    v.literal("aluminum"),
+    v.literal("upvc"),
+  ),
+  glazed: v.boolean(),
+  damage: v.number(),
+  availableFrom: v.number(),
+  quantity: v.number(),
+  location: locationV,
+});
+
 // Resolves imageStorageId → imageUrl so components always read from imageUrl.
 async function resolveImage<T extends { imageStorageId?: string; imageUrl?: string }>(
   ctx: { storage: { getUrl: (id: string) => Promise<string | null> } },
@@ -127,12 +152,12 @@ export const generateUploadUrl = mutation({
 });
 
 export const create = mutation({
-  args: { data: v.union(bricksV, woodV, windowV, tileV) },
+  args: { data: v.union(bricksV, woodV, windowV, tileV, doorV) },
   handler: async (ctx, { data }) => ctx.db.insert("listings", data),
 });
 
 export const update = mutation({
-  args: { id: v.id("listings"), data: v.union(bricksV, woodV, windowV, tileV) },
+  args: { id: v.id("listings"), data: v.union(bricksV, woodV, windowV, tileV, doorV) },
   handler: async (ctx, { id, data }) => {
     await ctx.db.replace(id, data);
   },

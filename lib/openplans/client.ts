@@ -1,4 +1,6 @@
 import type {
+  Door,
+  DoorOptions,
   OpenPlans as OpenPlansInstance,
   PlanProjectionCamera,
   WallOptions,
@@ -6,12 +8,18 @@ import type {
   WindowOptions,
   Window,
 } from '@opengeometry/openplans';
-import type { ListingDrawingSet, ListingPreviewSpec, WallPreviewSpec, WindowPreviewSpec } from '@/lib/openplans/listingPreview';
+import type {
+  DoorPreviewSpec,
+  ListingDrawingSet,
+  ListingPreviewSpec,
+  WallPreviewSpec,
+  WindowPreviewSpec,
+} from '@/lib/openplans/listingPreview';
 
 export type PreviewViewerMode = 'plan' | 'model';
 
 type OpenPlansModule = typeof import('@opengeometry/openplans');
-type PreviewElement = Wall | Window;
+type PreviewElement = Wall | Window | Door;
 type OpenPlansGridCarrier = {
   openThree?: {
     toggleGrid: (show: boolean) => void;
@@ -37,10 +45,14 @@ export const togglePreviewGrid = (openPlans: OpenPlansInstance, show: boolean) =
 
 const isWindowElement = (element: PreviewElement): element is Window => 'windowWidth' in element;
 
+const isDoorElement = (element: PreviewElement): element is Door => 'panelWidth' in element;
+
 const isWallElement = (element: PreviewElement): element is Wall => 'wallThickness' in element;
 
 const matchesPreviewSpec = (element: PreviewElement, spec: ListingPreviewSpec) =>
-  (spec.kind === 'window' && isWindowElement(element)) || (spec.kind === 'wall' && isWallElement(element));
+  (spec.kind === 'window' && isWindowElement(element)) ||
+  (spec.kind === 'door' && isDoorElement(element)) ||
+  (spec.kind === 'wall' && isWallElement(element));
 
 const mapWindowType = (_openPlansModule: OpenPlansModule, windowType: WindowPreviewSpec['windowType']) => {
   switch (windowType) {
@@ -65,6 +77,66 @@ const mapWallMaterial = (openPlansModule: OpenPlansModule, material: WallPreview
     case 'OTHER':
     default:
       return openPlansModule.WallMaterial.OTHER;
+  }
+};
+
+const mapDoorType = (
+  doorType: DoorPreviewSpec['doorType'],
+  glazed: boolean,
+) => {
+  switch (doorType) {
+    case 'sliding':
+      return 'SLIDING' as DoorOptions['doorType'];
+    case 'french':
+      return 'DOUBLEDOOR' as DoorOptions['doorType'];
+    case 'interior':
+      return glazed
+        ? 'GLASS' as DoorOptions['doorType']
+        : 'WOOD' as DoorOptions['doorType'];
+    case 'exterior':
+    default:
+      return glazed
+        ? 'GLASS' as DoorOptions['doorType']
+        : 'OTHER' as DoorOptions['doorType'];
+  }
+};
+
+const mapDoorMaterial = (
+  openPlansModule: OpenPlansModule,
+  material: DoorPreviewSpec['doorMaterial'],
+  glazed: boolean,
+) => {
+  if (glazed) {
+    return openPlansModule.DoorMaterialType.GLASS as DoorOptions['panelMaterial'];
+  }
+
+  switch (material) {
+    case 'wood':
+      return openPlansModule.DoorMaterialType.WOOD as DoorOptions['panelMaterial'];
+    case 'steel':
+    case 'aluminum':
+      return openPlansModule.DoorMaterialType.METAL as DoorOptions['panelMaterial'];
+    case 'upvc':
+    default:
+      return openPlansModule.DoorMaterialType.OTHER as DoorOptions['panelMaterial'];
+  }
+};
+
+const getDoorPanelColor = (spec: DoorPreviewSpec) => {
+  if (spec.glazed) {
+    return 0xa8c8d8;
+  }
+
+  switch (spec.doorMaterial) {
+    case 'wood':
+      return 0x8b5e3c;
+    case 'steel':
+      return 0x7b8794;
+    case 'aluminum':
+      return 0xb8c0c8;
+    case 'upvc':
+    default:
+      return 0xd9dde3;
   }
 };
 
@@ -105,6 +177,34 @@ const updateWindowElement = (
   });
 };
 
+const updateDoorElement = (
+  openPlansModule: OpenPlansModule,
+  element: Door,
+  spec: DoorPreviewSpec,
+) => {
+  const current = element.getOPConfig();
+
+  element.setOPConfig({
+    ...current,
+    labelName: spec.labelName,
+    doorType: mapDoorType(spec.doorType, spec.glazed),
+    panelMaterial: mapDoorMaterial(openPlansModule, spec.doorMaterial, spec.glazed),
+    doorHeight: spec.doorHeight,
+    frameColor: 0x000000,
+    doorColor: getDoorPanelColor(spec),
+    panelDimensions: {
+      ...current.panelDimensions,
+      width: spec.doorWidth,
+      thickness: spec.frameThickness,
+    },
+    frameDimensions: {
+      ...current.frameDimensions,
+      width: spec.frameThickness,
+      thickness: spec.frameThickness,
+    },
+  });
+};
+
 const createPreviewElement = (
   openPlansModule: OpenPlansModule,
   openPlans: OpenPlansInstance,
@@ -113,6 +213,12 @@ const createPreviewElement = (
   if (spec.kind === 'window') {
     const element = openPlans.window();
     updateWindowElement(openPlansModule, element, spec);
+    return element;
+  }
+
+  if (spec.kind === 'door') {
+    const element = openPlans.door();
+    updateDoorElement(openPlansModule, element, spec);
     return element;
   }
 
@@ -126,6 +232,11 @@ const updatePreviewElement = (
 ): PreviewElement => {
   if (spec.kind === 'window' && isWindowElement(element)) {
     updateWindowElement(openPlansModule, element, spec);
+    return element;
+  }
+
+  if (spec.kind === 'door' && isDoorElement(element)) {
+    updateDoorElement(openPlansModule, element, spec);
     return element;
   }
 
@@ -200,6 +311,21 @@ const getElementMetrics = (element: PreviewElement) => {
       height,
       depth,
       targetY: sillHeight + height / 2,
+    };
+  }
+
+  if (isDoorElement(element)) {
+    const width = Math.max(element.panelWidth, 0.5);
+    const height = Math.max(element.doorHeight, 0.5);
+    const depth = Math.max(Math.max(element.panelThickness, element.frameThickness), 0.1);
+
+    return {
+      centerX: 0,
+      centerZ: 0,
+      width,
+      height,
+      depth,
+      targetY: height / 2,
     };
   }
 

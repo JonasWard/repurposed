@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { OpenPlans as OpenPlansInstance, Wall, Window } from '@opengeometry/openplans';
+import type { Door, OpenPlans as OpenPlansInstance, Wall, Window } from '@opengeometry/openplans';
 import {
   applyViewerMode,
   fitPreviewElement,
@@ -11,7 +11,7 @@ import {
 } from '@/lib/openplans/client';
 import type { ListingPreviewSpec } from '@/lib/openplans/listingPreview';
 
-type PreviewElement = Wall | Window;
+type PreviewElement = Wall | Window | Door;
 type OpenPlansModule = typeof import('@opengeometry/openplans');
 type ViewerSurfaceMode = PreviewViewerMode | 'pdf';
 

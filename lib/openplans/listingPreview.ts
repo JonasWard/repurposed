@@ -1,10 +1,16 @@
 import type { PlanVectorPayload } from '@opengeometry/openplans';
-import type { FormData, ListingType, WindowType as ListingWindowType } from '@/components/listing-form/Shared';
+import type {
+  DoorMaterial as ListingDoorMaterial,
+  DoorType as ListingDoorType,
+  FormData,
+  ListingType,
+  WindowType as ListingWindowType,
+} from '@/components/listing-form/Shared';
 import type { ListingData } from '@/lib/elements';
 
 export type WallPreviewMaterial = 'BRICK' | 'WOOD' | 'OTHER';
 
-export type ListingPreviewSpec = WindowPreviewSpec | WallPreviewSpec;
+export type ListingPreviewSpec = WindowPreviewSpec | DoorPreviewSpec | WallPreviewSpec;
 
 export interface WindowPreviewSpec {
   kind: 'window';
@@ -15,9 +21,21 @@ export interface WindowPreviewSpec {
   frameThickness: number;
 }
 
+export interface DoorPreviewSpec {
+  kind: 'door';
+  listingType: 'door';
+  labelName: string;
+  doorType: ListingDoorType;
+  doorMaterial: ListingDoorMaterial;
+  glazed: boolean;
+  doorWidth: number;
+  doorHeight: number;
+  frameThickness: number;
+}
+
 export interface WallPreviewSpec {
   kind: 'wall';
-  listingType: Exclude<ListingType, 'window'>;
+  listingType: Exclude<ListingType, 'window' | 'door'>;
   labelName: string;
   wallMaterial: WallPreviewMaterial;
   wallColor: number;
@@ -37,6 +55,7 @@ const DEFAULT_LABELS: Record<ListingType, string> = {
   wood: 'Timber Element',
   window: 'Window',
   tile: 'Tile Panel',
+  door: 'Door',
 };
 
 const BRICK_COLORS: Record<'red' | 'yellow' | 'brown', number> = {
@@ -90,6 +109,34 @@ const buildWindowPreviewSpec = ({
   frameThickness: mmToMeters(frameThicknessMm),
 });
 
+const buildDoorPreviewSpec = ({
+  name,
+  widthMm,
+  heightMm,
+  frameThicknessMm,
+  doorType,
+  doorMaterial,
+  glazed,
+}: {
+  name: string;
+  widthMm: number;
+  heightMm: number;
+  frameThicknessMm: number;
+  doorType: ListingDoorType;
+  doorMaterial: ListingDoorMaterial;
+  glazed: boolean;
+}): DoorPreviewSpec => ({
+  kind: 'door',
+  listingType: 'door',
+  labelName: buildLabel(name, 'door'),
+  doorType,
+  doorMaterial,
+  glazed,
+  doorWidth: mmToMeters(widthMm),
+  doorHeight: mmToMeters(heightMm),
+  frameThickness: mmToMeters(frameThicknessMm),
+});
+
 const buildWallPreviewSpec = ({
   name,
   listingType,
@@ -100,7 +147,7 @@ const buildWallPreviewSpec = ({
   wallColor,
 }: {
   name: string;
-  listingType: Exclude<ListingType, 'window'>;
+  listingType: Exclude<ListingType, 'window' | 'door'>;
   lengthMm: number;
   heightMm: number;
   thicknessMm: number;
@@ -134,6 +181,16 @@ export const buildListingPreviewSpecFromForm = (
         widthMm: form.win_width,
         frameThicknessMm: form.frameThickness,
         windowType: form.windowType,
+      });
+    case 'door':
+      return buildDoorPreviewSpec({
+        name: form.name,
+        widthMm: form.d_width,
+        heightMm: form.d_height,
+        frameThicknessMm: form.d_frameThickness,
+        doorType: form.doorType,
+        doorMaterial: form.doorMaterial,
+        glazed: form.doorGlazed,
       });
     case 'bricks':
       return buildWallPreviewSpec({
@@ -176,6 +233,16 @@ export const buildListingPreviewSpecFromListing = (listing: ListingData): Listin
         widthMm: listing.geometry.width,
         frameThicknessMm: listing.geometry.frameThickness,
         windowType: listing.windowType,
+      });
+    case 'door':
+      return buildDoorPreviewSpec({
+        name: listing.name,
+        widthMm: listing.geometry.width,
+        heightMm: listing.geometry.height,
+        frameThicknessMm: listing.geometry.frameThickness,
+        doorType: listing.doorType,
+        doorMaterial: listing.material,
+        glazed: listing.glazed,
       });
     case 'bricks':
       return buildWallPreviewSpec({
