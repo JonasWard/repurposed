@@ -181,6 +181,13 @@ main.configurator-main * {
   }
 }
 
+/* Styling the OSM tiles a bit differently */
 .leaflet-tile {
   filter: saturate(0%) contrast(1.5) !important;
+}
+
+/* Removing the leaflet attribution */
+.leaflet-control-attribution.leaflet-control > *:nth-child(1),
+.leaflet-control-attribution.leaflet-control > *:nth-child(2) {
+  display: none;
 }
